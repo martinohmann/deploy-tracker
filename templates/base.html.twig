@@ -1,0 +1,48 @@
+{% set route = app.request.get('_route') %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
+
+    <title>DeployTracker - {% block title %}Index{% endblock %}</title>
+  </head>
+  <body>
+    <header class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
+      <span class="navbar-brand mb-0 h1">DeployTracker</span>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggler" aria-controls="navbarTogglerDemo" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarToggler">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item{% if route == 'dashboard_index' %} active{% endif %}">
+            <a class="nav-link" href="{{ path('dashboard_index') }}">Recent Deployments</a>
+          </li>
+          <li class="nav-item{% if route == 'dashboard_history' %} active{% endif %}">
+            <a class="nav-link" href="{{ path('dashboard_history') }}">Full History</a>
+          </li>
+          <li class="nav-item dropdown{% if route == 'dashboard_application' %} active{% endif %}">
+            {{ render(controller('Lesara\\DeployTracker\\Controller\\PartialController::applicationDropdown')) }}
+          </li>
+        </ul>
+      </div>
+    </header>
+    <div class="container-fluid mt-4">
+      <div class="row">
+        <div class="col">
+          {% block body %}{% endblock %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js" integrity="sha384-a5N7Y/aK3qNeh15eJKGWxsqtnX/wWdSZSKp+81YjTmS15nvnvxKHuzaWwXHDli+4" crossorigin="anonymous"></script>
+  </body>
+</html>

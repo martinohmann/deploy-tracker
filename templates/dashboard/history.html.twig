@@ -1,0 +1,10 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dashboard - History{% endblock %}
+
+{% block body %}
+  <p class="lead">
+    Full deployment history
+  </p>
+  {% include 'dashboard/partial/deployment-grid.html.twig' %}
+{% endblock %}

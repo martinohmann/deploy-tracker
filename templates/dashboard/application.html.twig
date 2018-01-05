@@ -1,0 +1,10 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dashboard{% if application %} for {{ application.name }}{% endif %}{% endblock %}
+
+{% block body %}
+  <p class="lead">
+    Deployment history for <strong>{{ application.name}}</strong>
+  </p>
+  {% include 'dashboard/partial/deployment-grid.html.twig' %}
+{% endblock %}

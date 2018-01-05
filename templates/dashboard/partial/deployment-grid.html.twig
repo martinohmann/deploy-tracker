@@ -1,0 +1,73 @@
+{% if deployments|length == 0 %}
+  <div class="alert alert-warning">
+    No tracked deployments available in the view.
+  </div>
+{% else %}
+  <table class="table table-striped table-responsive-md">
+    <thead class="thead-light">
+      <tr>
+        <th scope="col">Application</th>
+        <th scope="col">Stage</th>
+        <th scope="col">Branch</th>
+        <th scope="col">Commit Hash</th>
+        <th scope="col">Deployer</th>
+        <th scope="col">Time</th>
+        <th scope="col">Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for deployment in deployments %}
+        <tr>
+          <th scope="row">
+            <a class="text-dark" href="{{ path('dashboard_application', { 'id': deployment.application.id }) }}">
+              {{ deployment.application.name }}
+            </a>
+            <a class="badge badge-dark" href="{{ deployment.application.projectUrl }}" target="_blank">
+              repo
+            </a>
+          </th>
+          <td>
+            {{ deployment.stage }}
+          </td>
+          <td>
+            {% if deployment.status == 'rollback' %}
+              -
+            {% else %}
+              <a class="badge badge-info" href="{{ deployment.branchUrl }}" target="_blank">
+                {{ deployment.branch }}
+              </a>
+            {% endif %}
+          </td>
+          <td>
+            {% if deployment.status == 'rollback' %}
+              -
+            {% else %}
+              <a class="text-dark" href="{{ deployment.commitUrl }}" target="_blank" title="{{ deployment.commitHash }}">
+                {{ deployment.commitHash|slice(0, 12) }}
+              </a>
+            {% endif %}
+          </td>
+          <td>
+            {{ deployment.deployer }}
+          </td>
+          <td>
+            <span title="{{ deployment.deployDate|date}}">
+              {{ deployment.deployDate|fuzzy_date }}
+            </span>
+          </td>
+          <td>
+            {% if deployment.status == 'success' %}
+              <span class="badge badge-success">{{ deployment.status }}</span>
+            {% elseif deployment.status == 'failed' %}
+              <span class="badge badge-danger">{{ deployment.status }}</span>
+            {% elseif deployment.status == 'rollback' %}
+              <span class="badge badge-warning">{{ deployment.status }}</span>
+            {% else %}
+              <span class="badge badge-secondary">unknown</span>
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endif %}

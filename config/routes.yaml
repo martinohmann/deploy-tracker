@@ -1,0 +1,22 @@
+---
+# Lesara\DeployTracker\DashboardController routes
+dashboard_index:
+    path: /
+    controller: Lesara\DeployTracker\Controller\DashboardController::index
+
+dashboard_history:
+    path: /history
+    controller: Lesara\DeployTracker\Controller\DashboardController::history
+
+dashboard_application:
+    path: /application/{id}
+    controller: Lesara\DeployTracker\Controller\DashboardController::application
+    requirements:
+        id: \d+
+
+# Lesara\DeployTracker\ApiController routes
+api_publish:
+    path: /api/publish
+    methods: [POST]
+    controller: Lesara\DeployTracker\Controller\ApiController::publish
+    defaults: {_format: json}

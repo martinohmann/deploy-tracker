@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block body %}
+  <p class="lead">
+    Recent deployments
+  </p>
+  <div class="alert alert-info">
+    This view only shows the <strong>most recent deployment per stage</strong> for each application.
+  </div>
+  {% include 'dashboard/partial/deployment-grid.html.twig' %}
+{% endblock %}
