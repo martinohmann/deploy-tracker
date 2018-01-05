@@ -31,7 +31,7 @@ class DateUtil
             if ($d >= 1) {
                 $rounded = round($d);
                 return sprintf(
-                    'about %d %s%s ago',
+                    '%d %s%s ago',
                     $rounded,
                     $period,
                     $rounded > 1 ? 's' : ''

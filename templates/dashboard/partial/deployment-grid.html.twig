@@ -51,7 +51,7 @@
             {{ deployment.deployer }}
           </td>
           <td>
-            <span title="{{ deployment.deployDate|date}}">
+            <span title="{{ deployment.deployDate|date('Y-m-d H:i:s')}}">
               {{ deployment.deployDate|fuzzy_date }}
             </span>
           </td>
