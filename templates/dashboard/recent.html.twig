@@ -1,13 +1,13 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Dashboard - History{% endblock %}
+{% block title %}Dashboard - Recent deployments{% endblock %}
 
 {% block body %}
   <p class="lead">
-    History
+    Recent deployments
   </p>
   <div class="alert alert-info">
-    This view contains <strong>all deployments</strong> of the applications subscribed to the tracker.
+    This view only shows the <strong>most recent deployment per stage</strong> for each application.
   </div>
   {% include 'dashboard/grid/deployment.html.twig' %}
 {% endblock %}

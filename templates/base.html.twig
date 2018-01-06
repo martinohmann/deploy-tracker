@@ -13,17 +13,17 @@
   </head>
   <body>
     <header class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
-      <span class="navbar-brand mb-0 h1">DeployTracker</span>
+      <a class="navbar-brand mb-0 h1" href="{{ path('dashboard_index') }}">DeployTracker</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggler" aria-controls="navbarTogglerDemo" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarToggler">
         <ul class="navbar-nav mr-auto">
-          <li class="nav-item{% if route == 'dashboard_index' %} active{% endif %}">
-            <a class="nav-link" href="{{ path('dashboard_index') }}">Recent Deployments</a>
+          <li class="nav-item{% if route == 'dashboard_recent' %} active{% endif %}">
+            <a class="nav-link" href="{{ path('dashboard_recent') }}">Recent</a>
           </li>
           <li class="nav-item{% if route == 'dashboard_history' %} active{% endif %}">
-            <a class="nav-link" href="{{ path('dashboard_history') }}">Full History</a>
+            <a class="nav-link" href="{{ path('dashboard_history') }}">History</a>
           </li>
           <li class="nav-item dropdown{% if route == 'dashboard_application' %} active{% endif %}">
             {{ render(controller('Lesara\\DeployTracker\\Controller\\PartialController::applicationDropdown')) }}

@@ -6,6 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Lesara\DeployTracker\Repository\DeploymentRepository;
 use Lesara\DeployTracker\Repository\ApplicationRepository;
+use Lesara\DeployTracker\Entity\Deployment;
 
 class DashboardController extends Controller
 {
@@ -16,6 +17,19 @@ class DashboardController extends Controller
     public function index(DeploymentRepository $repository): Response
     {
         return $this->render('dashboard/index.html.twig', [
+            'count' => $repository->findCountByApplication(),
+            'success' => $repository->findByStatus(Deployment::STATUS_SUCCESS),
+            'failed' => $repository->findByStatus(Deployment::STATUS_FAILED),
+            'rollback' => $repository->findByStatus(Deployment::STATUS_ROLLBACK),
+        ]);
+    }
+    /**
+     * @param DeploymentRepository $repository
+     * @return Response
+     */
+    public function recent(DeploymentRepository $repository): Response
+    {
+        return $this->render('dashboard/recent.html.twig', [
             'deployments' => $repository->findMostRecent(),
         ]);
     }

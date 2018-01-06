@@ -1,0 +1,37 @@
+{% if deployments|length == 0 %}
+  <div class="alert alert-warning">
+    No data
+  </div>
+{% else %}
+  <table class="table table-striped table-responsive-md">
+    <thead class="thead-light">
+      <tr>
+        <th scope="col">Application</th>
+        <th scope="col">Stage</th>
+        <th scope="col">Time</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for deployment in deployments %}
+        <tr>
+          <th scope="row">
+            <a class="text-dark" href="{{ path('dashboard_application', { 'id': deployment.application.id }) }}">
+              {{ deployment.application.name }}
+            </a>
+            <a class="badge badge-dark" href="{{ deployment.application.projectUrl }}" target="_blank">
+              repo
+            </a>
+          </th>
+          <td>
+            {{ deployment.stage }}
+          </td>
+          <td>
+            <span title="{{ deployment.deployDate|date('Y-m-d H:i:s')}}">
+              {{ deployment.deployDate|fuzzy_date }}
+            </span>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endif %}

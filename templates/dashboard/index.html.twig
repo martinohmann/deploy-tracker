@@ -3,11 +3,22 @@
 {% block title %}Dashboard{% endblock %}
 
 {% block body %}
-  <p class="lead">
-    Recent deployments
-  </p>
-  <div class="alert alert-info">
-    This view only shows the <strong>most recent deployment per stage</strong> for each application.
+  <div class="row">
+    <div class="col">
+      <p class="lead">Applications by deployments</p>
+      {% include 'dashboard/grid/app-deploy-count.html.twig' with { 'items': count } %}
+    </div>
+    <div class="col">
+      <p class="lead">Successful deployments</p>
+      {% include 'dashboard/grid/stats.html.twig' with { 'deployments': success } %}
+    </div>
+    <div class="col">
+      <p class="lead">Failed deployments</p>
+      {% include 'dashboard/grid/stats.html.twig' with { 'deployments': failed } %}
+    </div>
+    <div class="col">
+      <p class="lead">Rollbacks</p>
+      {% include 'dashboard/grid/stats.html.twig' with { 'deployments': rollback } %}
+    </div>
   </div>
-  {% include 'dashboard/partial/deployment-grid.html.twig' %}
 {% endblock %}

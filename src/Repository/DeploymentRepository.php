@@ -4,6 +4,7 @@ namespace Lesara\DeployTracker\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Lesara\DeployTracker\Entity\Deployment;
+use Doctrine\ORM\Query\Expr\Join;
 
 class DeploymentRepository extends EntityRepository
 {
@@ -45,6 +46,47 @@ class DeploymentRepository extends EntityRepository
             ->where('d.application = :application_id')
             ->setParameter('application_id', $id)
             ->orderBy('d.deployDate', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @param int $limit
+     * @return array
+     */
+    public function findCountByApplication(int $limit = 5): array
+    {
+        return $this->createQueryBuilder('d')
+            ->select([
+                'COUNT(d.application) as count',
+                'a.id as id',
+                'a.name as name',
+                'a.projectUrl as projectUrl',
+            ])
+            ->join(
+                'd.application',
+                'a',
+                Join::WITH,
+                "d.application = a.id"
+            )
+            ->groupBy('d.application')
+            ->orderBy('count', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @param string $status
+     * @param int $limit
+     * @return array
+     */
+    public function findByStatus(string $status, int $limit = 5): array
+    {
+        return $this->createQueryBuilder('d')
+            ->where('d.status = :status')
+            ->setParameter('status', $status)
+            ->orderBy('d.deployDate', 'DESC')
+            ->setMaxResults($limit)
             ->getQuery()
             ->getResult();
     }
