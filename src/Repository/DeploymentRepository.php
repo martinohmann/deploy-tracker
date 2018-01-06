@@ -2,24 +2,34 @@
 
 namespace Lesara\DeployTracker\Repository;
 
-use Doctrine\ORM\EntityRepository;
 use Lesara\DeployTracker\Entity\Deployment;
+use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\ORM\Query;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class DeploymentRepository extends EntityRepository
 {
+    const ITEMS_PER_PAGE = 20;
+
     /**
-     * @return array
+     * @param int $page
+     * @return Paginator
      */
-    public function findAll(): array
+    public function findAll(int $page = 1): Paginator
     {
-        return $this->findBy([], ['deployDate' => 'DESC']);
+        $query = $this->createQueryBuilder('d')
+            ->orderBy('d.deployDate', 'DESC')
+            ->getQuery();
+
+        return $this->paginate($query, $page);
     }
 
     /**
-     * @return array
+     * @param int $page
+     * @return Paginator
      */
-    public function findMostRecent(): array
+    public function findMostRecent(int $page = 1): Paginator
     {
         // we want to find the most recent
         // deployment per application and stage
@@ -28,33 +38,37 @@ class DeploymentRepository extends EntityRepository
             ->addGroupBy('s.application')
             ->addGroupBy('s.stage');
 
-        return $this->createQueryBuilder('d')
+        $query = $this->createQueryBuilder('d')
             ->select('d')
             ->where($subQuery->expr()->in('d.id', $subQuery->getDQL()))
             ->orderBy('d.deployDate', 'DESC')
-            ->getQuery()
-            ->getResult();
+            ->getQuery();
+
+        return $this->paginate($query, $page);
     }
 
     /**
      * @param int $id
-     * @return array
+     * @param int $page
+     * @return Paginator
      */
-    public function findByApplicationId(int $id): array
+    public function findByApplicationId(int $id, int $page = 1): Paginator
     {
-        return $this->createQueryBuilder('d')
+        $query = $this->createQueryBuilder('d')
             ->where('d.application = :application_id')
             ->setParameter('application_id', $id)
             ->orderBy('d.deployDate', 'DESC')
-            ->getQuery()
-            ->getResult();
+            ->getQuery();
+
+        return $this->paginate($query, $page);
     }
 
     /**
+     * @param string $status
      * @param int $limit
      * @return array
      */
-    public function findCountByApplication(int $limit = 5): array
+    public function findCountsByStatus(string $status, int $limit = 5): array
     {
         return $this->createQueryBuilder('d')
             ->select([
@@ -69,6 +83,8 @@ class DeploymentRepository extends EntityRepository
                 Join::WITH,
                 "d.application = a.id"
             )
+            ->where('d.status = :status')
+            ->setParameter('status', $status)
             ->groupBy('d.application')
             ->orderBy('count', 'DESC')
             ->getQuery()
@@ -101,5 +117,25 @@ class DeploymentRepository extends EntityRepository
 
         $em->persist($deployment);
         $em->flush();
+    }
+
+    /**
+     * @param Query $query
+     * @param int $page
+     * @param int $limit
+     * @return Paginator
+     */
+    public function paginate(
+        Query $query,
+        int $page = 1,
+        int $limit = self::ITEMS_PER_PAGE
+    ): Paginator {
+        $paginator = new Paginator($query);
+
+        $paginator->getQuery()
+            ->setFirstResult($limit * ($page - 1))
+            ->setMaxResults($limit);
+
+        return $paginator;
     }
 }

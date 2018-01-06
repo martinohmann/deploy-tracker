@@ -4,21 +4,29 @@
 
 {% block body %}
   <div class="row">
-    <div class="col">
-      <p class="lead">Applications by deployments</p>
-      {% include 'dashboard/grid/app-deploy-count.html.twig' with { 'items': count } %}
-    </div>
-    <div class="col">
-      <p class="lead">Successful deployments</p>
+    <div class="col col-md-4">
+      <p class="lead text-success">Last successful deployments</p>
       {% include 'dashboard/grid/stats.html.twig' with { 'deployments': success } %}
     </div>
-    <div class="col">
-      <p class="lead">Failed deployments</p>
+    <div class="col col-md-4">
+      <p class="lead text-danger">Last failed deployments</p>
       {% include 'dashboard/grid/stats.html.twig' with { 'deployments': failed } %}
     </div>
-    <div class="col">
-      <p class="lead">Rollbacks</p>
+    <div class="col col-md-4">
+      <p class="lead text-warning">Last Rollbacks</p>
       {% include 'dashboard/grid/stats.html.twig' with { 'deployments': rollback } %}
+    </div>
+    <div class="col col-md-4">
+      <p class="lead text-success"># Successful deployments</p>
+      {% include 'dashboard/grid/app-deploy-count.html.twig' with { 'items': countsSuccess } %}
+    </div>
+    <div class="col col-md-4">
+      <p class="lead text-danger"># Failed deployments</p>
+      {% include 'dashboard/grid/app-deploy-count.html.twig' with { 'items': countsFailed } %}
+    </div>
+    <div class="col col-md-4">
+      <p class="lead text-warning"># Rollbacks</p>
+      {% include 'dashboard/grid/app-deploy-count.html.twig' with { 'items': countsRollback } %}
     </div>
   </div>
 {% endblock %}
