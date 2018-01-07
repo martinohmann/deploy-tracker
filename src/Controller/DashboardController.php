@@ -76,6 +76,28 @@ class DashboardController extends Controller
 
     /**
      * @param Request $request
+     * @param ApplicationRepository $repository
+     * @return Response
+     */
+    public function applications(Request $request, ApplicationRepository $repository): Response
+    {
+        $page = $this->getPage($request);
+        $applications = $repository->findAll($page);
+        $maxPage = ceil($applications->count() / ApplicationRepository::ITEMS_PER_PAGE);
+
+        if ($maxPage > 0 && $page > $maxPage) {
+            return $this->redirectToMaxPage($request, $maxPage);
+        }
+
+        return $this->render('dashboard/applications.html.twig', [
+            'applications' => $applications->getIterator(),
+            'page' => $page,
+            'maxPage' => $maxPage,
+        ]);
+    }
+
+    /**
+     * @param Request $request
      * @param int $id
      * @param ApplicationRepository $applicationRepository
      * @param DeploymentRepository $deploymentRepository

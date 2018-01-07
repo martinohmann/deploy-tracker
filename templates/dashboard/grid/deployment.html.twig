@@ -1,4 +1,4 @@
-{% if deployments|length == 0 %}
+{% if deployments.count == 0 %}
   <div class="alert alert-warning">
     No tracked deployments available in the view.
   </div>
@@ -21,9 +21,6 @@
           <th scope="row">
             <a class="text-dark" href="{{ path('dashboard_application', { 'id': deployment.application.id }) }}">
               {{ deployment.application.name }}
-            </a>
-            <a class="badge badge-dark" href="{{ deployment.application.projectUrl }}" target="_blank">
-              repo
             </a>
           </th>
           <td>
@@ -70,5 +67,5 @@
       {% endfor %}
     </tbody>
   </table>
-  {% include 'partial/pagination.html.twig' %}
+  {% include 'fragment/pagination.html.twig' %}
 {% endif %}

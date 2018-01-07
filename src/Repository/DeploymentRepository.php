@@ -5,11 +5,12 @@ namespace DeployTracker\Repository;
 use DeployTracker\Entity\Deployment;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
-use Doctrine\ORM\Query;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class DeploymentRepository extends EntityRepository
 {
+    use PaginatorTrait;
+
     const ITEMS_PER_PAGE = 20;
 
     /**
@@ -22,7 +23,7 @@ class DeploymentRepository extends EntityRepository
             ->orderBy('d.deployDate', 'DESC')
             ->getQuery();
 
-        return $this->paginate($query, $page);
+        return $this->paginate($query, $page, self::ITEMS_PER_PAGE);
     }
 
     /**
@@ -44,7 +45,7 @@ class DeploymentRepository extends EntityRepository
             ->orderBy('d.deployDate', 'DESC')
             ->getQuery();
 
-        return $this->paginate($query, $page);
+        return $this->paginate($query, $page, self::ITEMS_PER_PAGE);
     }
 
     /**
@@ -60,7 +61,7 @@ class DeploymentRepository extends EntityRepository
             ->orderBy('d.deployDate', 'DESC')
             ->getQuery();
 
-        return $this->paginate($query, $page);
+        return $this->paginate($query, $page, self::ITEMS_PER_PAGE);
     }
 
     /**
@@ -87,6 +88,7 @@ class DeploymentRepository extends EntityRepository
             ->setParameter('status', $status)
             ->groupBy('d.application')
             ->orderBy('count', 'DESC')
+            ->setMaxResults($limit)
             ->getQuery()
             ->getResult();
     }
@@ -117,25 +119,5 @@ class DeploymentRepository extends EntityRepository
 
         $em->persist($deployment);
         $em->flush();
-    }
-
-    /**
-     * @param Query $query
-     * @param int $page
-     * @param int $limit
-     * @return Paginator
-     */
-    public function paginate(
-        Query $query,
-        int $page = 1,
-        int $limit = self::ITEMS_PER_PAGE
-    ): Paginator {
-        $paginator = new Paginator($query);
-
-        $paginator->getQuery()
-            ->setFirstResult($limit * ($page - 1))
-            ->setMaxResults($limit);
-
-        return $paginator;
     }
 }

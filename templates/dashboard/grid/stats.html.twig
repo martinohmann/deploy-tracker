@@ -18,9 +18,6 @@
             <a class="text-dark" href="{{ path('dashboard_application', { 'id': deployment.application.id }) }}">
               {{ deployment.application.name }}
             </a>
-            <a class="badge badge-dark" href="{{ deployment.application.projectUrl }}" target="_blank">
-              repo
-            </a>
           </th>
           <td>
             {{ deployment.stage }}

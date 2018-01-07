@@ -3,6 +3,7 @@
 namespace DeployTracker\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -38,7 +39,7 @@ class Application
     /**
      * @ORM\OneToMany(targetEntity="DeployTracker\Entity\Deployment", mappedBy="application")
      *
-     * @var ArrayCollection
+     * @var Collection
      */
     private $deployments;
 
@@ -105,10 +106,10 @@ class Application
     }
 
     /**
-     * @param ArrayCollection $deployments
+     * @param Collection $deployments
      * @return self
      */
-    public function setDeployments(ArrayCollection $deployments): self
+    public function setDeployments(Collection $deployments): self
     {
         $this->deployments = $deployments;
 
@@ -116,9 +117,9 @@ class Application
     }
 
     /**
-     * @return ArrayCollection
+     * @return Collection
      */
-    public function getDeployments(): ArrayCollection
+    public function getDeployments(): Collection
     {
         return $this->deployments;
     }

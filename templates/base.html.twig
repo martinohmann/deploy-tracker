@@ -25,8 +25,8 @@
           <li class="nav-item{% if route == 'dashboard_history' %} active{% endif %}">
             <a class="nav-link" href="{{ path('dashboard_history') }}">History</a>
           </li>
-          <li class="nav-item dropdown{% if route == 'dashboard_application' %} active{% endif %}">
-            {{ render(controller('DeployTracker\\Controller\\PartialController::applicationDropdown')) }}
+          <li class="nav-item dropdown{% if route == 'dashboard_application' or route == 'dashboard_applications' %} active{% endif %}">
+            <a class="nav-link" href="{{ path('dashboard_applications') }}">Applications</a>
           </li>
         </ul>
       </div>
