@@ -9,7 +9,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ApplicationCreatCommand extends Command
+class ApplicationCreateCommand extends Command
 {
     const NAME = 'deploy-tracker:application:create';
 
