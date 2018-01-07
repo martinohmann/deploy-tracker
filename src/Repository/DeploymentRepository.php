@@ -20,7 +20,8 @@ class DeploymentRepository extends EntityRepository
     public function findAll(int $page = 1): Paginator
     {
         $query = $this->createQueryBuilder('d')
-            ->orderBy('d.deployDate', 'DESC')
+            ->addOrderBy('d.id', 'DESC')
+            ->addOrderBy('d.deployDate', 'DESC')
             ->getQuery();
 
         return $this->paginate($query, $page, self::ITEMS_PER_PAGE);
@@ -58,7 +59,8 @@ class DeploymentRepository extends EntityRepository
         $query = $this->createQueryBuilder('d')
             ->where('d.application = :application_id')
             ->setParameter('application_id', $id)
-            ->orderBy('d.deployDate', 'DESC')
+            ->addOrderBy('d.id', 'DESC')
+            ->addOrderBy('d.deployDate', 'DESC')
             ->getQuery();
 
         return $this->paginate($query, $page, self::ITEMS_PER_PAGE);
