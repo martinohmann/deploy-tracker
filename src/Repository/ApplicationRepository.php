@@ -1,9 +1,9 @@
 <?php
 
-namespace Lesara\DeployTracker\Repository;
+namespace DeployTracker\Repository;
 
 use Doctrine\ORM\EntityRepository;
-use Lesara\DeployTracker\Entity\Application;
+use DeployTracker\Entity\Application;
 
 class ApplicationRepository extends EntityRepository
 {

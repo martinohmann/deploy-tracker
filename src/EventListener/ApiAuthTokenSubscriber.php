@@ -1,11 +1,11 @@
 <?php
 
-namespace Lesara\DeployTracker\EventListener;
+namespace DeployTracker\EventListener;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
-use Lesara\DeployTracker\Controller\ApiController;
+use DeployTracker\Controller\ApiController;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class ApiAuthTokenSubscriber implements EventSubscriberInterface

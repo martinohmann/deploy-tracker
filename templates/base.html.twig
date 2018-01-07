@@ -26,7 +26,7 @@
             <a class="nav-link" href="{{ path('dashboard_history') }}">History</a>
           </li>
           <li class="nav-item dropdown{% if route == 'dashboard_application' %} active{% endif %}">
-            {{ render(controller('Lesara\\DeployTracker\\Controller\\PartialController::applicationDropdown')) }}
+            {{ render(controller('DeployTracker\\Controller\\PartialController::applicationDropdown')) }}
           </li>
         </ul>
       </div>

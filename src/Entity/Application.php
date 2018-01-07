@@ -1,6 +1,6 @@
 <?php
 
-namespace Lesara\DeployTracker\Entity;
+namespace DeployTracker\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Table(name="application")
  * @ORM\Entity()
- * @ORM\Entity(repositoryClass="Lesara\DeployTracker\Repository\ApplicationRepository")
+ * @ORM\Entity(repositoryClass="DeployTracker\Repository\ApplicationRepository")
  */
 class Application
 {
@@ -36,7 +36,7 @@ class Application
     private $projectUrl;
 
     /**
-     * @ORM\OneToMany(targetEntity="Lesara\DeployTracker\Entity\Deployment", mappedBy="application")
+     * @ORM\OneToMany(targetEntity="DeployTracker\Entity\Deployment", mappedBy="application")
      *
      * @var ArrayCollection
      */

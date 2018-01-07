@@ -1,8 +1,8 @@
 <?php
 
-namespace Lesara\DeployTracker\Twig;
+namespace DeployTracker\Twig;
 
-use Lesara\DeployTracker\Util\DateUtil;
+use DeployTracker\Util\DateUtil;
 
 class DateExtension extends \Twig_Extension
 {

@@ -1,13 +1,13 @@
 <?php
 
-namespace Lesara\DeployTracker\Controller;
+namespace DeployTracker\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
-use Lesara\DeployTracker\Repository\DeploymentRepository;
-use Lesara\DeployTracker\Repository\ApplicationRepository;
-use Lesara\DeployTracker\Entity\Deployment;
-use Lesara\DeployTracker\Controller\PageAwareTrait;
+use DeployTracker\Repository\DeploymentRepository;
+use DeployTracker\Repository\ApplicationRepository;
+use DeployTracker\Entity\Deployment;
+use DeployTracker\Controller\PageAwareTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 

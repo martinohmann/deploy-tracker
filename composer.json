@@ -33,7 +33,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Lesara\\DeployTracker\\": "src/"
+            "DeployTracker\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "DeployTracker\\Tests\\": "tests/"
         }
     },
     "replace": {

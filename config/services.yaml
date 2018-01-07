@@ -16,29 +16,29 @@ services:
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
-    Lesara\DeployTracker\:
+    DeployTracker\:
         resource: '../src/*'
         exclude: '../src/{Entity,Migrations,Tests}'
 
     # controllers are imported separately to make sure services can be injected
     # as action arguments even if you don't extend any base controller class
-    Lesara\DeployTracker\Controller\:
+    DeployTracker\Controller\:
         resource: '../src/Controller'
         tags: ['controller.service_arguments']
 
-    Lesara\DeployTracker\EventListener\ApiAuthTokenSubscriber:
+    DeployTracker\EventListener\ApiAuthTokenSubscriber:
         arguments:
             $authToken: '%api_auth_token%'
 
-    Lesara\DeployTracker\Repository\ApplicationRepository:
+    DeployTracker\Repository\ApplicationRepository:
         factory: ['@doctrine.orm.entity_manager', getRepository]
         arguments:
-            - Lesara\DeployTracker\Entity\Application
+            - DeployTracker\Entity\Application
 
-    Lesara\DeployTracker\Repository\DeploymentRepository:
+    DeployTracker\Repository\DeploymentRepository:
         factory: ['@doctrine.orm.entity_manager', getRepository]
         arguments:
-            - Lesara\DeployTracker\Entity\Deployment
+            - DeployTracker\Entity\Deployment
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

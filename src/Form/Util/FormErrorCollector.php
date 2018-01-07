@@ -1,6 +1,6 @@
 <?php
 
-namespace Lesara\DeployTracker\Form\Util;
+namespace DeployTracker\Form\Util;
 
 use Symfony\Component\Form\FormInterface;
 

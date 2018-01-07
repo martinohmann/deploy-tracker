@@ -1,6 +1,6 @@
 <?php
 
-namespace Lesara\DeployTracker;
+namespace DeployTracker;
 
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\Config\Loader\LoaderInterface;

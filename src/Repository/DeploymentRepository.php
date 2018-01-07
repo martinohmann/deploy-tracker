@@ -1,8 +1,8 @@
 <?php
 
-namespace Lesara\DeployTracker\Repository;
+namespace DeployTracker\Repository;
 
-use Lesara\DeployTracker\Entity\Deployment;
+use DeployTracker\Entity\Deployment;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\Query;

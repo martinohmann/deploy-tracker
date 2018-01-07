@@ -1,6 +1,6 @@
 <?php
 
-namespace Lesara\DeployTracker\Entity;
+namespace DeployTracker\Entity;
 
 use Symfony\Component\Validator\Constraints as Assert;
 

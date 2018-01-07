@@ -1,14 +1,14 @@
 <?php
 
-namespace Lesara\DeployTracker\Entity;
+namespace DeployTracker\Entity;
 
-use Lesara\DeployTracker\Entity\Application;
+use DeployTracker\Entity\Application;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Table(name="deployment")
  * @ORM\Entity()
- * @ORM\Entity(repositoryClass="Lesara\DeployTracker\Repository\DeploymentRepository")
+ * @ORM\Entity(repositoryClass="DeployTracker\Repository\DeploymentRepository")
  */
 class Deployment
 {
@@ -61,7 +61,7 @@ class Deployment
     private $deployDate;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Lesara\DeployTracker\Entity\Application", inversedBy="deployments")
+     * @ORM\ManyToOne(targetEntity="DeployTracker\Entity\Application", inversedBy="deployments")
      * @ORM\JoinColumn(name="application_id", referencedColumnName="id")
      *
      * @var Application

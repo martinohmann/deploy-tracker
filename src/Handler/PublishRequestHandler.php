@@ -1,12 +1,12 @@
 <?php
 
-namespace Lesara\DeployTracker\Handler;
+namespace DeployTracker\Handler;
 
-use Lesara\DeployTracker\Entity\Application;
-use Lesara\DeployTracker\Entity\Deployment;
-use Lesara\DeployTracker\Entity\PublishRequest;
-use Lesara\DeployTracker\Repository\ApplicationRepository;
-use Lesara\DeployTracker\Repository\DeploymentRepository;
+use DeployTracker\Entity\Application;
+use DeployTracker\Entity\Deployment;
+use DeployTracker\Entity\PublishRequest;
+use DeployTracker\Repository\ApplicationRepository;
+use DeployTracker\Repository\DeploymentRepository;
 
 class PublishRequestHandler
 {

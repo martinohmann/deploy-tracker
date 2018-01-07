@@ -1,15 +1,15 @@
 <?php
 
-namespace Lesara\DeployTracker\Controller;
+namespace DeployTracker\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Lesara\DeployTracker\Form\Util\FormErrorCollector;
-use Lesara\DeployTracker\Entity\PublishRequest;
-use Lesara\DeployTracker\Form\Type\PublishRequestType;
-use Lesara\DeployTracker\Handler\PublishRequestHandler;
+use DeployTracker\Form\Util\FormErrorCollector;
+use DeployTracker\Entity\PublishRequest;
+use DeployTracker\Form\Type\PublishRequestType;
+use DeployTracker\Handler\PublishRequestHandler;
 
 class ApiController extends Controller
 {

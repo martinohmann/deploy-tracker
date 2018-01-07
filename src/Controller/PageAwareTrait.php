@@ -1,6 +1,6 @@
 <?php
 
-namespace Lesara\DeployTracker\Controller;
+namespace DeployTracker\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

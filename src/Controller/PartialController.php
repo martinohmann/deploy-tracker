@@ -1,9 +1,9 @@
 <?php
 
-namespace Lesara\DeployTracker\Controller;
+namespace DeployTracker\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Lesara\DeployTracker\Repository\ApplicationRepository;
+use DeployTracker\Repository\ApplicationRepository;
 use Symfony\Component\HttpFoundation\Response;
 
 class PartialController extends Controller

@@ -1,6 +1,6 @@
 <?php
 
-namespace Lesara\DeployTracker\Util;
+namespace DeployTracker\Util;
 
 class DateUtil
 {

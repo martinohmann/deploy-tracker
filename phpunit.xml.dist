@@ -9,7 +9,7 @@
 >
     <php>
         <ini name="error_reporting" value="-1" />
-        <env name="KERNEL_CLASS" value="Lesara\DeployTracker\Kernel" />
+        <env name="KERNEL_CLASS" value="DeployTracker\Kernel" />
         <env name="APP_ENV" value="test" />
         <env name="APP_DEBUG" value="1" />
         <env name="APP_SECRET" value="s$cretf0rt3st" />
@@ -26,7 +26,7 @@
 
     <testsuites>
         <testsuite name="Project Test Suite">
-            <directory>src/Tests</directory>
+            <directory>tests/</directory>
         </testsuite>
     </testsuites>
 
