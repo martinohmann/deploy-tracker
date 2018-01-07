@@ -9,6 +9,9 @@
         <th scope="col">Application Name</th>
         <th scope="col">Project URL</th>
         <th scope="col">Deployments</th>
+        <th scope="col">Successful</th>
+        <th scope="col">Rollbacks</th>
+        <th scope="col">Failed</th>
       </tr>
     </thead>
     <tbody>
@@ -27,6 +30,21 @@
           <td>
             <a class="text-dark" href="{{ path('dashboard_application', { 'id': application.id }) }}">
               {{ application.deployments.count }}
+            </a>
+          </td>
+          <td>
+            <a class="text-success" href="{{ path('dashboard_application', { 'id': application.id }) }}">
+              {{ application.successfulDeployments.count }}
+            </a>
+          </td>
+          <td>
+            <a class="text-warning" href="{{ path('dashboard_application', { 'id': application.id }) }}">
+              {{ application.rollbacks.count }}
+            </a>
+          </td>
+          <td>
+            <a class="text-danger" href="{{ path('dashboard_application', { 'id': application.id }) }}">
+              {{ application.failedDeployments.count }}
             </a>
           </td>
         </tr>

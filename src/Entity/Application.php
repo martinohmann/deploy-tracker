@@ -5,6 +5,7 @@ namespace DeployTracker\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use DeployTracker\Entity\Deployment;
 
 /**
  * @ORM\Table(name="application")
@@ -122,5 +123,39 @@ class Application
     public function getDeployments(): Collection
     {
         return $this->deployments;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getDeploymentsByStatus(string $status): Collection
+    {
+        return $this->deployments->filter(function (Deployment $deployment) use ($status) {
+            return $deployment->getStatus() === $status;
+        });
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getSuccessfulDeployments(): Collection
+    {
+        return $this->getDeploymentsByStatus(Deployment::STATUS_SUCCESS);
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getFailedDeployments(): Collection
+    {
+        return $this->getDeploymentsByStatus(Deployment::STATUS_FAILED);
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getRollbacks(): Collection
+    {
+        return $this->getDeploymentsByStatus(Deployment::STATUS_ROLLBACK);
     }
 }
