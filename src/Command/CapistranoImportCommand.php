@@ -3,6 +3,7 @@
 namespace DeployTracker\Command;
 
 use DeployTracker\Importer\CapistranoRevisionLogImporter;
+use DeployTracker\Repository\ApplicationRepository;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -23,11 +24,18 @@ class CapistranoImportCommand extends Command
     private $importer;
 
     /**
-     * @param CapistranoRevisionLogImporter $importer
+     * @var ApplicationRepository
      */
-    public function __construct(CapistranoRevisionLogImporter $importer)
+    private $repository;
+
+    /**
+     * @param CapistranoRevisionLogImporter $importer
+     * @param ApplicationRepository $repository
+     */
+    public function __construct(CapistranoRevisionLogImporter $importer, ApplicationRepository $repository)
     {
         $this->importer = $importer;
+        $this->repository = $repository;
 
         parent::__construct();
     }
@@ -71,9 +79,18 @@ class CapistranoImportCommand extends Command
         $stage = $input->getArgument(self::ARGUMENT_STAGE);
         $filename = $input->getArgument(self::ARGUMENT_REVISON_LOG);
 
-        $this->importer->setLogger(new ConsoleLogger($output));
-        $this->importer->import($filename, $applicationName, $stage);
+        $application = $this->repository->findOneByName($applicationName);
 
-        $output->writeln('<info>Revision log imported.</info>');
+        if (null === $application) {
+            throw new \RuntimeException(sprintf(
+                'Application "%s" does not exist.',
+                $applicationName
+            ));
+        }
+
+        $this->importer->setLogger(new ConsoleLogger($output));
+        $this->importer->import($filename, $application, $stage);
+
+        $output->writeln('<info>Revision log import finished.</info>');
     }
 }

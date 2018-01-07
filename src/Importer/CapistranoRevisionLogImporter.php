@@ -2,8 +2,8 @@
 
 namespace DeployTracker\Importer;
 
+use DeployTracker\Entity\Application;
 use DeployTracker\Entity\Deployment;
-use DeployTracker\Repository\ApplicationRepository;
 use DeployTracker\Repository\DeploymentRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Psr\Log\LoggerAwareInterface;
@@ -20,14 +20,9 @@ class CapistranoRevisionLogImporter implements ImporterInterface, LoggerAwareInt
     const RELEASE_DATE_FMT = 'YmdHis';
 
     /**
-     * @var ApplicationRepository
-     */
-    private $applicationRepository;
-
-    /**
      * @var DeploymentRepository
      */
-    private $deploymentRepository;
+    private $repository;
 
     /**
      * @var Application
@@ -40,37 +35,22 @@ class CapistranoRevisionLogImporter implements ImporterInterface, LoggerAwareInt
     private $stage;
 
     /**
-     * @param ApplicationRepository $applicationRepository
-     * @param DeploymentRepository $deploymentRepository
+     * @param DeploymentRepository $repository
      * @param LoggerInterface $logger
      */
-    public function __construct(
-        ApplicationRepository $applicationRepository,
-        DeploymentRepository $deploymentRepository,
-        LoggerInterface $logger = null
-    ) {
-        $this->applicationRepository = $applicationRepository;
-        $this->deploymentRepository = $deploymentRepository;
+    public function __construct(DeploymentRepository $repository, LoggerInterface $logger = null)
+    {
+        $this->repository = $repository;
         $this->logger = $logger ?: new NullLogger();
     }
 
     /**
-     * @param string $filename
-     * @param string $applicationName
-     * @param string $stage
-     * @return void
+     * {@inheritdoc}
      */
-    public function import(string $filename, string $applicationName, string $stage)
+    public function import(string $filename, Application $application, string $stage)
     {
         $this->stage = $stage;
-        $this->application = $this->applicationRepository->findOneByName($applicationName);
-
-        if (null === $this->application) {
-            throw new \RuntimeException(sprintf(
-                'Unknown application "%s"',
-                $applicationName
-            ));
-        }
+        $this->application = $application;
 
         if (!file_exists($filename) || !is_readable($filename)) {
             throw new \RuntimeException(sprintf(
@@ -81,7 +61,12 @@ class CapistranoRevisionLogImporter implements ImporterInterface, LoggerAwareInt
         
         $collection = $this->processRevisionLog($filename);
 
-        $this->deploymentRepository->persistCollection($collection);
+        $this->repository->persistCollection($collection);
+
+        $this->logger->info(sprintf(
+            '%d entries imported.',
+            $collection->count()
+        ));
     }
 
     /**

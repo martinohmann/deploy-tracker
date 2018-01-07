@@ -2,13 +2,15 @@
 
 namespace DeployTracker\Importer;
 
+use DeployTracker\Entity\Application;
+
 interface ImporterInterface
 {
     /**
      * @param string $filename
-     * @param string $applicationName
+     * @param Application $application
      * @param string $stage
      * @return void
      */
-    public function import(string $filename, string $applicationName, string $stage);
+    public function import(string $filename, Application $application, string $stage);
 }
