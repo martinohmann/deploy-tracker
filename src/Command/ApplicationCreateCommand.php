@@ -69,7 +69,7 @@ class ApplicationCreateCommand extends Command
         $application->setName($name)
             ->setProjectUrl($projectUrl);
 
-        $this->repository->save($application);
+        $this->repository->persist($application);
 
         $output->writeln(sprintf(
             '<info>Application "%s" created.</info>',

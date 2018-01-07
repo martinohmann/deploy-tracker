@@ -47,7 +47,7 @@ class PublishRequestHandler
                 ->setProjectUrl($request->getProjectUrl());
         }
 
-        $this->applicationRepository->save($application);
+        $this->applicationRepository->persist($application);
 
         $deployDate = (new \DateTime())->setTimestamp($request->getTimestamp());
 
@@ -60,6 +60,6 @@ class PublishRequestHandler
             ->setDeployDate($deployDate)
             ->setStatus($request->getStatus());
 
-        $this->deploymentRepository->save($deployment);
+        $this->deploymentRepository->persist($deployment);
     }
 }

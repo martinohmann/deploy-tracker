@@ -116,7 +116,7 @@ class DeploymentRepository extends EntityRepository
      * @param Deployment $deployment
      * @return void
      */
-    public function save(Deployment $deployment)
+    public function persist(Deployment $deployment)
     {
         $em = $this->getEntityManager();
 
@@ -128,7 +128,7 @@ class DeploymentRepository extends EntityRepository
      * @param Collection $deployments
      * @return void
      */
-    public function saveCollection(Collection $deployments)
+    public function persistCollection(Collection $deployments)
     {
         $em = $this->getEntityManager();
 

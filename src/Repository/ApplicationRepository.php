@@ -29,7 +29,7 @@ class ApplicationRepository extends EntityRepository
      * @param Application $application
      * @return void
      */
-    public function save(Application $application)
+    public function persist(Application $application)
     {
         $em = $this->getEntityManager();
 

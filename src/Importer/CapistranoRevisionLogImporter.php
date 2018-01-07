@@ -81,7 +81,7 @@ class CapistranoRevisionLogImporter implements ImporterInterface, LoggerAwareInt
         
         $collection = $this->processRevisionLog($filename);
 
-        $this->deploymentRepository->saveCollection($collection);
+        $this->deploymentRepository->persistCollection($collection);
     }
 
     /**
