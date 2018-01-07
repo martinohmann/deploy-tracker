@@ -36,4 +36,16 @@ class ApplicationRepository extends EntityRepository
         $em->persist($application);
         $em->flush();
     }
+
+    /**
+     * @param Application $application
+     * @return void
+     */
+    public function remove(Application $application)
+    {
+        $em = $this->getEntityManager();
+
+        $em->remove($application);
+        $em->flush();
+    }
 }

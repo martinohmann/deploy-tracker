@@ -8,13 +8,13 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
 
-class ApplicationCreateCommand extends Command
+class ApplicationRemoveCommand extends Command
 {
-    const NAME = 'deploy-tracker:application:create';
+    const NAME = 'deploy-tracker:application:remove';
 
     const ARGUMENT_NAME = 'name';
-    const ARGUMENT_PROJECT_URL = 'project-url';
 
     /**
      * @var ApplicationRepository
@@ -37,16 +37,11 @@ class ApplicationCreateCommand extends Command
     protected function configure()
     {
         $this->setName(self::NAME)
-            ->setDescription('Create entry for application in the database.')
+            ->setDescription('Remove application and all its deployments from the database.')
             ->addArgument(
                 self::ARGUMENT_NAME,
                 InputArgument::REQUIRED,
                 'The name of the application.'
-            )
-            ->addArgument(
-                self::ARGUMENT_PROJECT_URL,
-                InputArgument::REQUIRED,
-                'The project url.'
             );
     }
 
@@ -56,24 +51,34 @@ class ApplicationCreateCommand extends Command
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $name = $input->getArgument(self::ARGUMENT_NAME);
-        $projectUrl = $input->getArgument(self::ARGUMENT_PROJECT_URL);
 
-        if (null !== $this->repository->findOneByName($name)) {
+        $application = $this->repository->findOneByName($name);
+
+        if (null === $application) {
             throw new \RuntimeException(sprintf(
-                'Application with name "%s" already exists.',
+                'Application with name "%s" does not exist.',
                 $name
             ));
         }
 
-        $application = new Application();
-        $application->setName($name)
-            ->setProjectUrl($projectUrl);
+        $helper = $this->getHelper('question');
+        $question = new ConfirmationQuestion(sprintf(
+            'Remove entry for application "%s" and all associated deployments? [y/N] ',
+            $name
+        ), false);
 
-        $this->repository->save($application);
+        if (!$helper->ask($input, $output, $question)) {
+            return;
+        }
+
+        $deploymentCount = $application->getDeployments()->count();
+
+        $this->repository->remove($application);
 
         $output->writeln(sprintf(
-            '<info>Application "%s" created.</info>',
-            $name
+            '<info>Application "%s" and all %d associated deployments removed.</info>',
+            $name,
+            $deploymentCount
         ));
     }
 }

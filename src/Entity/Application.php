@@ -38,7 +38,7 @@ class Application
     private $projectUrl;
 
     /**
-     * @ORM\OneToMany(targetEntity="DeployTracker\Entity\Deployment", mappedBy="application")
+     * @ORM\OneToMany(targetEntity="DeployTracker\Entity\Deployment", mappedBy="application", cascade={"remove"})
      *
      * @var Collection
      */

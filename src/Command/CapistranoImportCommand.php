@@ -20,7 +20,7 @@ class CapistranoImportCommand extends Command
     /**
      * @var CapistranoRevisionLogImporter
      */
-    protected $importer;
+    private $importer;
 
     /**
      * @param CapistranoRevisionLogImporter $importer
@@ -73,5 +73,7 @@ class CapistranoImportCommand extends Command
 
         $this->importer->setLogger(new ConsoleLogger($output));
         $this->importer->import($filename, $applicationName, $stage);
+
+        $output->writeln('<info>Revision log imported.</info>');
     }
 }
