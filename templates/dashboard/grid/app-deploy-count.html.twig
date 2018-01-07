@@ -14,7 +14,7 @@
       {% for item in items %}
         <tr>
           <th scope="row">
-            <a class="text-dark" href="{{ path('dashboard_application', { 'id': item.id }) }}">
+            <a class="text-dark" href="{{ path('dashboard_application', {id: item.id}) }}">
               {{ item.name }}
             </a>
           </th>

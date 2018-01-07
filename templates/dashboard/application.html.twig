@@ -4,7 +4,8 @@
 
 {% block body %}
   <p class="lead">
-    Deployment history for <strong>{{ application.name}}</strong>
+    Deployment history for <strong>{{ application.name }}</strong>
+    {% include 'fragment/filters.html.twig' %}
   </p>
   {% include 'dashboard/grid/application-deployment.html.twig' %}
 {% endblock %}

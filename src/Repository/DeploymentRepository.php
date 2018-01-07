@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\QueryBuilder;
 
 class DeploymentRepository extends EntityRepository
 {
@@ -16,23 +17,26 @@ class DeploymentRepository extends EntityRepository
 
     /**
      * @param int $page
+     * @param array $filters
      * @return Paginator
      */
-    public function findAll(int $page = 1): Paginator
+    public function findAll(int $page = 1, array $filters = []): Paginator
     {
-        $query = $this->createQueryBuilder('d')
+        $qb = $this->createQueryBuilder('d')
             ->addOrderBy('d.id', 'DESC')
-            ->addOrderBy('d.deployDate', 'DESC')
-            ->getQuery();
+            ->addOrderBy('d.deployDate', 'DESC');
 
-        return $this->paginate($query, $page, self::ITEMS_PER_PAGE);
+        $this->addFilters($qb, $filters);
+
+        return $this->paginate($qb->getQuery(), $page, self::ITEMS_PER_PAGE);
     }
 
     /**
      * @param int $page
+     * @param array $filters
      * @return Paginator
      */
-    public function findMostRecent(int $page = 1): Paginator
+    public function findMostRecent(int $page = 1, array $filters = []): Paginator
     {
         // we want to find the most recent
         // deployment per application and stage
@@ -41,30 +45,14 @@ class DeploymentRepository extends EntityRepository
             ->addGroupBy('s.application')
             ->addGroupBy('s.stage');
 
-        $query = $this->createQueryBuilder('d')
+        $qb = $this->createQueryBuilder('d')
             ->select('d')
             ->where($subQuery->expr()->in('d.id', $subQuery->getDQL()))
-            ->orderBy('d.deployDate', 'DESC')
-            ->getQuery();
+            ->orderBy('d.deployDate', 'DESC');
+        
+        $this->addFilters($qb, $filters);
 
-        return $this->paginate($query, $page, self::ITEMS_PER_PAGE);
-    }
-
-    /**
-     * @param int $id
-     * @param int $page
-     * @return Paginator
-     */
-    public function findByApplicationId(int $id, int $page = 1): Paginator
-    {
-        $query = $this->createQueryBuilder('d')
-            ->where('d.application = :application_id')
-            ->setParameter('application_id', $id)
-            ->addOrderBy('d.id', 'DESC')
-            ->addOrderBy('d.deployDate', 'DESC')
-            ->getQuery();
-
-        return $this->paginate($query, $page, self::ITEMS_PER_PAGE);
+        return $this->paginate($qb->getQuery(), $page, self::ITEMS_PER_PAGE);
     }
 
     /**
@@ -137,5 +125,18 @@ class DeploymentRepository extends EntityRepository
         }
 
         $em->flush();
+    }
+
+    /**
+     * @param QueryBuilder $qb
+     * @param array $filters
+     * @return void
+     */
+    private function addFilters(QueryBuilder $qb, array $filters)
+    {
+        foreach ($filters as $key => $value) {
+            $qb->andWhere(sprintf('d.%s = :%s', $key, $key))
+                ->setParameter($key, $value);
+        }
     }
 }

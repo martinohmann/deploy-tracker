@@ -5,6 +5,7 @@
 {% block body %}
   <p class="lead">
     Deployment history
+    {% include 'fragment/filters.html.twig' %}
   </p>
   <div class="alert alert-info">
     This view contains <strong>all deployments</strong> of the applications subscribed to the tracker.

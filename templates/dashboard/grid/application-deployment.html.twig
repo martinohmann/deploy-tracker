@@ -1,3 +1,7 @@
+{% set route = app.request.attributes.get('_route') %}
+{% set routeParams = app.request.attributes.get('_route_params') %}
+{% set routeParamsWithFilters = routeParams|merge(filters) %}
+
 {% if deployments.count == 0 %}
   <div class="alert alert-warning">
     No tracked deployments available in the view.
@@ -18,7 +22,9 @@
       {% for deployment in deployments %}
         <tr>
           <td>
-            {{ deployment.stage }}
+            <a class="text-dark" href="{{ path(route, routeParamsWithFilters|merge({stage: deployment.stage})) }}">
+              {{ deployment.stage }}
+            </a>
           </td>
           <td>
             {% if deployment.rollback %}
@@ -39,7 +45,9 @@
             {% endif %}
           </td>
           <td>
-            {{ deployment.deployer }}
+            <a class="text-dark" href="{{ path(route, routeParamsWithFilters|merge({deployer: deployment.deployer})) }}">
+              {{ deployment.deployer }}
+            </a>
           </td>
           <td>
             <span title="{{ deployment.deployDate|date('Y-m-d H:i:s')}}">
@@ -47,15 +55,17 @@
             </span>
           </td>
           <td>
-            {% if deployment.success %}
-              <span class="badge badge-success">{{ deployment.status }}</span>
-            {% elseif deployment.failed %}
-              <span class="badge badge-danger">{{ deployment.status }}</span>
-            {% elseif deployment.rollback %}
-              <span class="badge badge-warning">{{ deployment.status }}</span>
-            {% else %}
-              <span class="badge badge-secondary">unknown</span>
-            {% endif %}
+            <a href="{{ path(route, routeParamsWithFilters|merge({status: deployment.status})) }}" title="{{ deployment.status }}">
+              {% if deployment.success %}
+                <span class="badge badge-success">{{ deployment.status }}</span>
+              {% elseif deployment.failed %}
+                <span class="badge badge-danger">{{ deployment.status }}</span>
+              {% elseif deployment.rollback %}
+                <span class="badge badge-warning">{{ deployment.status }}</span>
+              {% else %}
+                <span class="badge badge-secondary">unknown</span>
+              {% endif %}
+            </a>
           </td>
         </tr>
       {% endfor %}

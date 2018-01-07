@@ -5,6 +5,7 @@
 {% block body %}
   <p class="lead">
     Recent deployments
+    {% include 'fragment/filters.html.twig' %}
   </p>
   <div class="alert alert-info">
     This view only shows the <strong>most recent deployment per stage</strong> for each application.

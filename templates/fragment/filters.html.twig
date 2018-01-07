@@ -1,0 +1,7 @@
+{% if filters is defined %}
+  {% for key, value in filters %}
+    {% if loop.first %}with {% endif %}
+    <em>{{ key|capitalize }} <strong>&quot;{{ value }}&quot;</strong></em>
+    {% if not loop.last %} and {% endif %}
+  {% endfor %}
+{% endif %}

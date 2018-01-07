@@ -18,7 +18,7 @@
       {% for application in applications %}
         <tr>
           <th scope="row">
-            <a class="text-dark" href="{{ path('dashboard_application', { 'id': application.id }) }}">
+            <a class="text-dark" href="{{ path('dashboard_application', {id: application.id}) }}">
               {{ application.name }}
             </a>
           </th>
@@ -28,22 +28,22 @@
             </a>
           </td>
           <td class="text-right">
-            <a class="text-dark" href="{{ path('dashboard_application', { 'id': application.id }) }}">
+            <a class="text-dark" href="{{ path('dashboard_application', {id: application.id}) }}">
               {{ application.deployments.count }}
             </a>
           </td>
           <td class="text-right">
-            <a class="text-success" href="{{ path('dashboard_application', { 'id': application.id }) }}">
+            <a class="text-success" href="{{ path('dashboard_application', {id: application.id, status: 'success'}) }}">
               {{ application.successfulDeployments.count }}
             </a>
           </td>
           <td class="text-right">
-            <a class="text-warning" href="{{ path('dashboard_application', { 'id': application.id }) }}">
+            <a class="text-warning" href="{{ path('dashboard_application', {id: application.id, status: 'rollback'}) }}">
               {{ application.rollbacks.count }}
             </a>
           </td>
           <td class="text-right">
-            <a class="text-danger" href="{{ path('dashboard_application', { 'id': application.id }) }}">
+            <a class="text-danger" href="{{ path('dashboard_application', {id: application.id, status: 'failed'}) }}">
               {{ application.failedDeployments.count }}
             </a>
           </td>

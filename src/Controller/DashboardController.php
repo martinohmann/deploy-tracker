@@ -14,6 +14,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class DashboardController extends Controller
 {
     use PageAwareTrait;
+    use FilterAwareTrait;
 
     /**
      * @param DeploymentRepository $repository
@@ -38,7 +39,8 @@ class DashboardController extends Controller
     public function recent(Request $request, DeploymentRepository $repository): Response
     {
         $page = $this->getPage($request);
-        $deployments = $repository->findMostRecent($page);
+        $filters = $this->getFilters($request, ['deployer', 'status', 'stage']);
+        $deployments = $repository->findMostRecent($page, $filters);
         $maxPage = ceil($deployments->count() / DeploymentRepository::ITEMS_PER_PAGE);
 
         if ($maxPage > 0 && $page > $maxPage) {
@@ -49,6 +51,7 @@ class DashboardController extends Controller
             'deployments' => $deployments->getIterator(),
             'page' => $page,
             'maxPage' => $maxPage,
+            'filters' => $filters,
         ]);
     }
 
@@ -60,7 +63,8 @@ class DashboardController extends Controller
     public function history(Request $request, DeploymentRepository $repository): Response
     {
         $page = $this->getPage($request);
-        $deployments = $repository->findAll($page);
+        $filters = $this->getFilters($request, ['deployer', 'status', 'stage']);
+        $deployments = $repository->findAll($page, $filters);
         $maxPage = ceil($deployments->count() / DeploymentRepository::ITEMS_PER_PAGE);
 
         if ($maxPage > 0 && $page > $maxPage) {
@@ -71,6 +75,7 @@ class DashboardController extends Controller
             'deployments' => $deployments->getIterator(),
             'page' => $page,
             'maxPage' => $maxPage,
+            'filters' => $filters,
         ]);
     }
 
@@ -116,7 +121,9 @@ class DashboardController extends Controller
         }
 
         $page = $this->getPage($request);
-        $deployments = $deploymentRepository->findByApplicationId($id, $page);
+        $filters = $this->getFilters($request, ['deployer', 'stage', 'status']);
+        $filters = array_merge($filters, ['application' => $id]);
+        $deployments = $deploymentRepository->findAll($page, $filters);
         $maxPage = ceil($deployments->count() / DeploymentRepository::ITEMS_PER_PAGE);
 
         if ($maxPage > 0 && $page > $maxPage) {
@@ -128,6 +135,7 @@ class DashboardController extends Controller
             'deployments' => $deployments->getIterator(),
             'page' => $page,
             'maxPage' => $maxPage,
+            'filters' => $filters,
         ]);
     }
 }
