@@ -6,7 +6,6 @@
   <table class="table table-striped table-responsive-md border">
     <thead class="thead-light">
       <tr>
-        <th scope="col">Application</th>
         <th scope="col">Stage</th>
         <th scope="col">Branch</th>
         <th scope="col">Commit Hash</th>
@@ -18,11 +17,6 @@
     <tbody>
       {% for deployment in deployments %}
         <tr>
-          <th scope="row">
-            <a class="text-dark" href="{{ path('dashboard_application', { 'id': deployment.application.id }) }}">
-              {{ deployment.application.name }}
-            </a>
-          </th>
           <td>
             {{ deployment.stage }}
           </td>

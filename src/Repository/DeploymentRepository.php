@@ -6,12 +6,13 @@ use DeployTracker\Entity\Deployment;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\Tools\Pagination\Paginator;
+use Doctrine\Common\Collections\Collection;
 
 class DeploymentRepository extends EntityRepository
 {
     use PaginatorTrait;
 
-    const ITEMS_PER_PAGE = 20;
+    const ITEMS_PER_PAGE = 50;
 
     /**
      * @param int $page
@@ -120,6 +121,21 @@ class DeploymentRepository extends EntityRepository
         $em = $this->getEntityManager();
 
         $em->persist($deployment);
+        $em->flush();
+    }
+
+    /**
+     * @param Collection $deployments
+     * @return void
+     */
+    public function saveCollection(Collection $deployments)
+    {
+        $em = $this->getEntityManager();
+
+        foreach ($deployments as $deployment) {
+            $em->persist($deployment);
+        }
+
         $em->flush();
     }
 }

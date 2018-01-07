@@ -10,7 +10,7 @@ class ApplicationRepository extends EntityRepository
 {
     use PaginatorTrait;
 
-    const ITEMS_PER_PAGE = 20;
+    const ITEMS_PER_PAGE = 50;
 
     /**
      * @param int $page

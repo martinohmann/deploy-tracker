@@ -242,4 +242,28 @@ class Deployment
     {
         return sprintf('%s/commit/%s', $this->application->getProjectUrl(), $this->commitHash);
     }
+
+    /**
+     * @return bool
+     */
+    public function isSuccess(): bool
+    {
+        return $this->status === self::STATUS_SUCCESS;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isRollback(): bool
+    {
+        return $this->status === self::STATUS_ROLLBACK;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isFailed(): bool
+    {
+        return $this->status === self::STATUS_FAILED;
+    }
 }
