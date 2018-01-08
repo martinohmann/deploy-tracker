@@ -8,6 +8,7 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/octicons/4.4.0/font/octicons.css" integrity="sha256-4y5taf5SyiLyIqR9jL3AoJU216Rb8uBEDuUjBHO9tsQ=" crossorigin="anonymous" />
 
     <title>DeployTracker - {% block title %}Index{% endblock %}</title>
   </head>
@@ -29,6 +30,12 @@
             <a class="nav-link" href="{{ path('dashboard_applications') }}">Applications</a>
           </li>
         </ul>
+
+        <span class="navbar-text">
+          <a href="https://github.com/martinohmann/deploy-tracker" target="_blank" title="Github Project">
+            <i class="octicon octicon-mark-github"></i>
+          </a>
+        </span>
       </div>
     </header>
     <div class="container-fluid mt-4">
