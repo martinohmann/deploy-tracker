@@ -6,7 +6,7 @@ use Doctrine\ORM\EntityRepository;
 use DeployTracker\Entity\Application;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 
-class ApplicationRepository extends EntityRepository
+class ApplicationRepository extends EntityRepository implements ItemsPerPageAwareInterface
 {
     use PaginatorTrait;
 
@@ -22,7 +22,7 @@ class ApplicationRepository extends EntityRepository
             ->orderBy('a.name', 'ASC')
             ->getQuery();
 
-        return $this->paginate($query, $page, self::ITEMS_PER_PAGE);
+        return $this->paginate($query, $page, $this->getItemsPerPage());
     }
 
     /**
@@ -47,5 +47,13 @@ class ApplicationRepository extends EntityRepository
 
         $em->remove($application);
         $em->flush();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getItemsPerPage(): int
+    {
+        return self::ITEMS_PER_PAGE;
     }
 }

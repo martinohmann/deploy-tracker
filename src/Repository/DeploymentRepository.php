@@ -10,7 +10,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\QueryBuilder;
 use DeployTracker\Entity\Application;
 
-class DeploymentRepository extends EntityRepository
+class DeploymentRepository extends EntityRepository implements ItemsPerPageAwareInterface
 {
     use PaginatorTrait;
 
@@ -29,7 +29,7 @@ class DeploymentRepository extends EntityRepository
 
         $this->addFilters($qb, $filters);
 
-        return $this->paginate($qb->getQuery(), $page, self::ITEMS_PER_PAGE);
+        return $this->paginate($qb->getQuery(), $page, $this->getItemsPerPage());
     }
 
     /**
@@ -48,7 +48,7 @@ class DeploymentRepository extends EntityRepository
 
         $this->addFilters($qb, $filters);
 
-        return $this->paginate($qb->getQuery(), $page, self::ITEMS_PER_PAGE);
+        return $this->paginate($qb->getQuery(), $page, $this->getItemsPerPage());
     }
 
     /**
@@ -72,7 +72,7 @@ class DeploymentRepository extends EntityRepository
         
         $this->addFilters($qb, $filters);
 
-        return $this->paginate($qb->getQuery(), $page, self::ITEMS_PER_PAGE);
+        return $this->paginate($qb->getQuery(), $page, $this->getItemsPerPage());
     }
 
     /**
@@ -145,6 +145,14 @@ class DeploymentRepository extends EntityRepository
         }
 
         $em->flush();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getItemsPerPage(): int
+    {
+        return self::ITEMS_PER_PAGE;
     }
 
     /**

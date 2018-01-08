@@ -16,6 +16,8 @@ class DashboardController extends Controller
     use PageAwareTrait;
     use FilterAwareTrait;
 
+    const FILTER_PARAMS = ['deployer', 'stage', 'status'];
+
     /**
      * @param DeploymentRepository $repository
      * @return Response
@@ -39,11 +41,11 @@ class DashboardController extends Controller
     public function recent(Request $request, DeploymentRepository $repository): Response
     {
         $page = $this->getPage($request);
-        $filters = $this->getFilters($request, ['deployer', 'status', 'stage']);
+        $filters = $this->getFilters($request, self::FILTER_PARAMS);
         $deployments = $repository->findMostRecent($page, $filters);
-        $maxPage = ceil($deployments->count() / DeploymentRepository::ITEMS_PER_PAGE);
+        $maxPage = $this->getMaxPage($deployments, $repository);
 
-        if ($maxPage > 0 && $page > $maxPage) {
+        if ($this->shouldRedirectToMaxPage($page, $maxPage)) {
             return $this->redirectToMaxPage($request, $maxPage);
         }
 
@@ -63,11 +65,11 @@ class DashboardController extends Controller
     public function history(Request $request, DeploymentRepository $repository): Response
     {
         $page = $this->getPage($request);
-        $filters = $this->getFilters($request, ['deployer', 'status', 'stage']);
+        $filters = $this->getFilters($request, self::FILTER_PARAMS);
         $deployments = $repository->findAll($page, $filters);
-        $maxPage = ceil($deployments->count() / DeploymentRepository::ITEMS_PER_PAGE);
+        $maxPage = $this->getMaxPage($deployments, $repository);
 
-        if ($maxPage > 0 && $page > $maxPage) {
+        if ($this->shouldRedirectToMaxPage($page, $maxPage)) {
             return $this->redirectToMaxPage($request, $maxPage);
         }
 
@@ -88,9 +90,9 @@ class DashboardController extends Controller
     {
         $page = $this->getPage($request);
         $applications = $repository->findAll($page);
-        $maxPage = ceil($applications->count() / ApplicationRepository::ITEMS_PER_PAGE);
+        $maxPage = $this->getMaxPage($applications, $repository);
 
-        if ($maxPage > 0 && $page > $maxPage) {
+        if ($this->shouldRedirectToMaxPage($page, $maxPage)) {
             return $this->redirectToMaxPage($request, $maxPage);
         }
 
@@ -121,11 +123,11 @@ class DashboardController extends Controller
         }
 
         $page = $this->getPage($request);
-        $filters = $this->getFilters($request, ['deployer', 'stage', 'status']);
+        $filters = $this->getFilters($request, self::FILTER_PARAMS);
         $deployments = $deploymentRepository->findAllForApplication($application, $page, $filters);
-        $maxPage = ceil($deployments->count() / DeploymentRepository::ITEMS_PER_PAGE);
+        $maxPage = $this->getMaxPage($applications, $deploymentRepository);
 
-        if ($maxPage > 0 && $page > $maxPage) {
+        if ($this->shouldRedirectToMaxPage($page, $maxPage)) {
             return $this->redirectToMaxPage($request, $maxPage);
         }
 
