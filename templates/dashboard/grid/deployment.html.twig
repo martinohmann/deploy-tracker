@@ -1,7 +1,3 @@
-{% set route = app.request.attributes.get('_route') %}
-{% set routeParams = app.request.attributes.get('_route_params') %}
-{% set routeParamsWithFilters = routeParams|merge(filters) %}
-
 {% if deployments.count == 0 %}
   <div class="alert alert-warning">
     No tracked deployments available in the view.
@@ -28,7 +24,7 @@
             </a>
           </th>
           <td>
-            <a class="text-dark" href="{{ path(route, routeParamsWithFilters|merge({stage: deployment.stage})) }}">
+            <a class="text-dark" href="{{ path(route_name(), route_params(filters|merge({stage: deployment.stage}))) }}">
               {{ deployment.stage }}
             </a>
           </td>
@@ -51,7 +47,7 @@
             {% endif %}
           </td>
           <td>
-            <a class="text-dark" href="{{ path(route, routeParamsWithFilters|merge({deployer: deployment.deployer})) }}">
+            <a class="text-dark" href="{{ path(route_name(), route_params(filters|merge({deployer: deployment.deployer}))) }}">
               {{ deployment.deployer }}
             </a>
           </td>
@@ -61,7 +57,7 @@
             </span>
           </td>
           <td>
-            <a href="{{ path(route, routeParamsWithFilters|merge({status: deployment.status})) }}" title="{{ deployment.status }}">
+            <a href="{{ path(route_name(), route_params(filters|merge({status: deployment.status}))) }}" title="{{ deployment.status }}">
               {% if deployment.success %}
                 <span class="badge badge-success">{{ deployment.status }}</span>
               {% elseif deployment.failed %}

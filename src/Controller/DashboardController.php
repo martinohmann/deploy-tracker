@@ -122,8 +122,7 @@ class DashboardController extends Controller
 
         $page = $this->getPage($request);
         $filters = $this->getFilters($request, ['deployer', 'stage', 'status']);
-        $filters = array_merge($filters, ['application' => $id]);
-        $deployments = $deploymentRepository->findAll($page, $filters);
+        $deployments = $deploymentRepository->findAllForApplication($application, $page, $filters);
         $maxPage = ceil($deployments->count() / DeploymentRepository::ITEMS_PER_PAGE);
 
         if ($maxPage > 0 && $page > $maxPage) {

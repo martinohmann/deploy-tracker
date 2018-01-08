@@ -8,6 +8,7 @@ use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\QueryBuilder;
+use DeployTracker\Entity\Application;
 
 class DeploymentRepository extends EntityRepository
 {
@@ -23,6 +24,25 @@ class DeploymentRepository extends EntityRepository
     public function findAll(int $page = 1, array $filters = []): Paginator
     {
         $qb = $this->createQueryBuilder('d')
+            ->addOrderBy('d.id', 'DESC')
+            ->addOrderBy('d.deployDate', 'DESC');
+
+        $this->addFilters($qb, $filters);
+
+        return $this->paginate($qb->getQuery(), $page, self::ITEMS_PER_PAGE);
+    }
+
+    /**
+     * @param Application $application
+     * @param int $page
+     * @param array $filters
+     * @return Paginator
+     */
+    public function findAllForApplication(Application $application, int $page = 1, array $filters = []): Paginator
+    {
+        $qb = $this->createQueryBuilder('d')
+            ->where('d.application = :application_id')
+            ->setParameter('application_id', $application->getId())
             ->addOrderBy('d.id', 'DESC')
             ->addOrderBy('d.deployDate', 'DESC');
 

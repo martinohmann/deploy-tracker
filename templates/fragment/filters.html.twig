@@ -1,7 +1,12 @@
 {% if filters is defined %}
   {% for key, value in filters %}
     {% if loop.first %}with {% endif %}
-    <em>{{ key|capitalize }} <strong>&quot;{{ value }}&quot;</strong></em>
+      <a class="badge badge-dark" href="{{ path(route_name(), route_params(filters, [key]))}}" title="Remove {{ key }} filter">
+        <em>{{ key|capitalize }} <strong>&quot;{{ value }}&quot;</strong></em>
+        <span class="close" aria-label="Remove">
+          <span aria-hidden-label="true">&times;</span>
+        </span>
+      </a>
     {% if not loop.last %} and {% endif %}
   {% endfor %}
 {% endif %}
