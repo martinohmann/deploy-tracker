@@ -15,12 +15,14 @@
       {% for deployment in deployments %}
         <tr>
           <th scope="row">
-            <a class="text-dark" href="{{ path('dashboard_application', {id: deployment.application.id}) }}">
+            <a class="text-dark" href="{{ path('dashboard_application', {id: deployment.application.id, status: status}) }}">
               {{ deployment.application.name }}
             </a>
           </th>
           <td>
-            {{ deployment.stage }}
+            <a class="text-dark" href="{{ path('dashboard_history', {status: status, stage: deployment.stage}) }}">
+              {{ deployment.stage }}
+            </a>
           </td>
           <td>
             <span title="{{ deployment.deployDate|date('Y-m-d H:i:s')}}">
