@@ -125,7 +125,7 @@ class DashboardController extends Controller
         $page = $this->getPage($request);
         $filters = $this->getFilters($request, self::FILTER_PARAMS);
         $deployments = $deploymentRepository->findAllForApplication($application, $page, $filters);
-        $maxPage = $this->getMaxPage($applications, $deploymentRepository);
+        $maxPage = $this->getMaxPage($deployments, $deploymentRepository);
 
         if ($this->shouldRedirectToMaxPage($page, $maxPage)) {
             return $this->redirectToMaxPage($request, $maxPage);
