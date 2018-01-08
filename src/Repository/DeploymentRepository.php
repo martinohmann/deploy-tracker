@@ -148,6 +148,21 @@ class DeploymentRepository extends EntityRepository implements ItemsPerPageAware
     }
 
     /**
+     * @param Collection $deployments
+     * @return void
+     */
+    public function removeCollection(Collection $deployments)
+    {
+        $em = $this->getEntityManager();
+
+        foreach ($deployments as $deployment) {
+            $em->remove($deployment);
+        }
+
+        $em->flush();
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getItemsPerPage(): int
