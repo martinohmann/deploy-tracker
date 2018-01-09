@@ -10,6 +10,8 @@ use DeployTracker\Form\Util\FormErrorCollector;
 use DeployTracker\Entity\PublishRequest;
 use DeployTracker\Form\Type\PublishRequestType;
 use DeployTracker\Handler\PublishRequestHandler;
+use DeployTracker\Exception\PublishRequestException;
+use Psr\Log\LoggerInterface;
 
 class ApiController extends Controller
 {
@@ -17,12 +19,14 @@ class ApiController extends Controller
      * @param Request $request
      * @param FormErrorCollector $formErrorCollector
      * @param PublishRequestHandler $publishRequestHandler
+     * @param LoggerInterface $logger
      * @return Response
      */
     public function publish(
         Request $request,
         FormErrorCollector $formErrorCollector,
-        PublishRequestHandler $publishRequestHandler
+        PublishRequestHandler $publishRequestHandler,
+        LoggerInterface $logger
     ): Response {
         $publishRequest = new PublishRequest();
         $form = $this->createForm(PublishRequestType::class, $publishRequest);
@@ -37,8 +41,11 @@ class ApiController extends Controller
 
         try {
             $publishRequestHandler->handle($publishRequest);
+        } catch (PublishRequestException $e) {
+            return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         } catch (\Throwable $e) {
-            return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+            $logger->error($e);
+            return new JsonResponse(['error' => 'Internal Server Error'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         return new JsonResponse(['status' => 'ok'], Response::HTTP_OK);

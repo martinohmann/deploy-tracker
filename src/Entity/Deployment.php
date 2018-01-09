@@ -33,14 +33,14 @@ class Deployment
     private $stage;
 
     /**
-     * @ORM\Column(name="branch", type="string", length=255)
+     * @ORM\Column(name="branch", type="string", length=255, nullable=true)
      *
      * @var string
      */
     private $branch;
 
     /**
-     * @ORM\Column(name="commit_hash", type="string", length=255)
+     * @ORM\Column(name="commit_hash", type="string", length=255, nullable=true)
      *
      * @var string
      */
@@ -114,10 +114,10 @@ class Deployment
     }
 
     /**
-     * @param string $branch
+     * @param ?string $branch
      * @return self
      */
-    public function setBranch(string $branch): self
+    public function setBranch(?string $branch): self
     {
         $this->branch = $branch;
 
@@ -133,10 +133,10 @@ class Deployment
     }
 
     /**
-     * @param string $commitHash
+     * @param ?string $commitHash
      * @return self
      */
-    public function setCommitHash(string $commitHash): self
+    public function setCommitHash(?string $commitHash): self
     {
         $this->commitHash = $commitHash;
 

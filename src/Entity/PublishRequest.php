@@ -18,25 +18,14 @@ class PublishRequest
      *
      * @var string
      */
-    private $projectUrl;
-
-    /**
-     * @Assert\NotBlank()
-     *
-     * @var string
-     */
     private $stage;
 
     /**
-     * @Assert\NotBlank()
-     *
      * @var string
      */
     private $branch;
 
     /**
-     * @Assert\NotBlank()
-     *
      * @var string
      */
     private $commitHash;
@@ -75,25 +64,6 @@ class PublishRequest
     public function getApplication(): ?string
     {
         return $this->application;
-    }
-
-    /**
-     * @param string $projectUrl
-     * @return self
-     */
-    public function setProjectUrl(string $projectUrl): self
-    {
-        $this->projectUrl = $projectUrl;
-
-        return $this;
-    }
-
-    /**
-     * @return ?string
-     */
-    public function getProjectUrl(): ?string
-    {
-        return $this->projectUrl;
     }
 
     /**

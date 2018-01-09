@@ -16,7 +16,6 @@ class PublishRequestType extends AbstractType
     {
         $builder
             ->add('application', TextType::class)
-            ->add('project_url', TextType::class)
             ->add('stage', TextType::class)
             ->add('branch', TextType::class)
             ->add('commit_hash', TextType::class)

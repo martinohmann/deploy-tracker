@@ -23,21 +23,21 @@
             </a>
           </td>
           <td>
-            {% if deployment.rollback %}
-              -
-            {% else %}
+            {% if deployment.branch %}
               <a class="badge badge-info" href="{{ deployment.branchUrl }}" target="_blank">
                 {{ deployment.branch }}
               </a>
+            {% else %}
+              -
             {% endif %}
           </td>
           <td>
-            {% if deployment.rollback %}
-              -
-            {% else %}
+            {% if deployment.commitHash %}
               <a class="text-dark" href="{{ deployment.commitUrl }}" target="_blank" title="{{ deployment.commitHash }}">
                 {{ deployment.commitHash|slice(0, 12) }}
               </a>
+            {% else %}
+              -
             {% endif %}
           </td>
           <td>

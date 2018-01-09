@@ -179,8 +179,6 @@ class CapistranoRevisionLogImporter implements ImporterInterface, LoggerAwareInt
     {
         $rollback = new Deployment();
         $rollback->setStage($this->stage)
-            ->setBranch('unknown')
-            ->setCommitHash('deadbeef')
             ->setDeployDate(clone $previous->getDeployDate())
             ->setDeployer($matches[1])
             ->setApplication($this->application)

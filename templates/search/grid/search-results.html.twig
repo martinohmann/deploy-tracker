@@ -29,21 +29,21 @@
             </a>
           </td>
           <td>
-            {% if result.rollback %}
-              -
-            {% else %}
+            {% if result.branch %}
               <a class="badge badge-info" href="{{ result.branchUrl }}" target="_blank">
                 {{ result.branch }}
               </a>
+            {% else %}
+              -
             {% endif %}
           </td>
           <td>
-            {% if result.rollback %}
-              -
-            {% else %}
+            {% if result.commitUrl %}
               <a class="text-dark" href="{{ result.commitUrl }}" target="_blank" title="{{ result.commitHash }}">
                 {{ result.commitHash|slice(0, 12) }}
               </a>
+            {% else %}
+              -
             {% endif %}
           </td>
           <td>
