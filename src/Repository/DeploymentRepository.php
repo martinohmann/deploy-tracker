@@ -25,10 +25,9 @@ class DeploymentRepository extends EntityRepository implements PaginatorInterfac
      */
     public function findAll(int $page = 1, array $filters = []): Paginator
     {
-        $qb = $this->createQueryBuilder('d')
-            ->addOrderBy('d.id', 'DESC')
-            ->addOrderBy('d.deployDate', 'DESC');
+        $qb = $this->createQueryBuilder('d');
 
+        $this->addDefaultOrderBy($qb);
         $this->addFilters($qb, $filters);
 
         return $this->paginate($qb->getQuery(), $page, $this->getItemsPerPage());
@@ -44,10 +43,9 @@ class DeploymentRepository extends EntityRepository implements PaginatorInterfac
     {
         $qb = $this->createQueryBuilder('d')
             ->where('d.application = :application_id')
-            ->setParameter('application_id', $application->getId())
-            ->addOrderBy('d.id', 'DESC')
-            ->addOrderBy('d.deployDate', 'DESC');
+            ->setParameter('application_id', $application->getId());
 
+        $this->addDefaultOrderBy($qb);
         $this->addFilters($qb, $filters);
 
         return $this->paginate($qb->getQuery(), $page, $this->getItemsPerPage());
@@ -69,9 +67,9 @@ class DeploymentRepository extends EntityRepository implements PaginatorInterfac
 
         $qb = $this->createQueryBuilder('d')
             ->select('d')
-            ->where($subQuery->expr()->in('d.id', $subQuery->getDQL()))
-            ->orderBy('d.deployDate', 'DESC');
+            ->where($subQuery->expr()->in('d.id', $subQuery->getDQL()));
         
+        $this->addDefaultOrderBy($qb);
         $this->addFilters($qb, $filters);
 
         return $this->paginate($qb->getQuery(), $page, $this->getItemsPerPage());
@@ -113,13 +111,14 @@ class DeploymentRepository extends EntityRepository implements PaginatorInterfac
      */
     public function findByStatus(string $status, int $limit = 5): array
     {
-        return $this->createQueryBuilder('d')
+        $qb = $this->createQueryBuilder('d')
             ->where('d.status = :status')
             ->setParameter('status', $status)
-            ->orderBy('d.deployDate', 'DESC')
-            ->setMaxResults($limit)
-            ->getQuery()
-            ->getResult();
+            ->setMaxResults($limit);
+
+        $this->addDefaultOrderBy($qb);
+
+        return $qb->getQuery()->getResult();
     }
 
     /**
@@ -137,10 +136,9 @@ class DeploymentRepository extends EntityRepository implements PaginatorInterfac
             ->orWhere('d.commitHash LIKE :search_query')
             ->orWhere('d.deployer LIKE :search_query')
             ->orWhere('a.name LIKE :search_query')
-            ->setParameter('search_query', '%' . $searchQuery . '%')
-            ->addOrderBy('d.id', 'DESC')
-            ->addOrderBy('d.deployDate', 'DESC');
+            ->setParameter('search_query', '%' . $searchQuery . '%');
 
+        $this->addDefaultOrderBy($qb);
         $this->addFilters($qb, $filters);
 
         return $this->paginate($qb->getQuery(), $page, $this->getItemsPerPage());
@@ -202,6 +200,16 @@ class DeploymentRepository extends EntityRepository implements PaginatorInterfac
     public function getAvailableFilters(): array
     {
         return self::AVAILABLE_FILTERS;
+    }
+
+    /**
+     * @param QueryBuilder $qb
+     * @return void
+     */
+    private function addDefaultOrderBy(QueryBuilder $qb)
+    {
+        $qb->addOrderBy('d.deployDate', 'DESC')
+            ->addOrderBy('d.id', 'DESC');
     }
 
     /**
