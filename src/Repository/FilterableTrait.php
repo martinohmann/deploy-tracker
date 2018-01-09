@@ -1,21 +1,20 @@
 <?php
 
-namespace DeployTracker\Controller;
+namespace DeployTracker\Repository;
 
 use Symfony\Component\HttpFoundation\Request;
 
-trait FilterAwareTrait
+trait FilterableTrait
 {
     /**
      * @param Request $request
-     * @param array $allowedFilters
      * @return array
      */
-    protected function getFilters(Request $request, array $allowedFilters): array
+    public function getFiltersFromRequest(Request $request): array
     {
         $filters = [];
 
-        foreach ($allowedFilters as $filter) {
+        foreach ($this->getAvailableFilters() as $filter) {
             if ($request->query->has($filter)) {
                 $filters[$filter] = $request->query->get($filter);
             }

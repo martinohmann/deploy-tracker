@@ -30,12 +30,15 @@
             <a class="nav-link" href="{{ path('dashboard_applications') }}">Applications</a>
           </li>
         </ul>
-
         <span class="navbar-text">
-          <a href="https://github.com/martinohmann/deploy-tracker" target="_blank" title="Github Project">
+          <a class="nav-link pr-4" href="https://github.com/martinohmann/deploy-tracker" target="_blank" title="Github Project">
             <i class="octicon octicon-mark-github"></i>
           </a>
         </span>
+        <form id="search-form" class="form-inline my-2 my-lg-0" href="{{ path('search_index') }}">
+          <input id="search-query" class="form-control mr-sm-2" type="search" name="q" placeholder="Search" aria-label="Search">
+          <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Search</button>
+        </form>
       </div>
     </header>
     <div class="container-fluid mt-4">
@@ -51,5 +54,12 @@
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js" integrity="sha384-a5N7Y/aK3qNeh15eJKGWxsqtnX/wWdSZSKp+81YjTmS15nvnvxKHuzaWwXHDli+4" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+      (function ($) {
+        $('#search-form').submit(function (event) {
+          if ('' === $('#search-query').val().trim()) event.preventDefault();
+        });
+      })(jQuery);
+    </script>
   </body>
 </html>

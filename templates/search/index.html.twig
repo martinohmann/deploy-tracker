@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Search results{% endblock %}
+
+{% block body %}
+  <p class="lead">
+    <strong>{{ totalResults }}</strong> Search results for &quot;<strong>{{ searchQuery }}</strong>&quot;
+    {% include 'fragment/filters.html.twig' %}
+  </p>
+  {% include 'search/grid/search-results.html.twig' %}
+{% endblock %}
+

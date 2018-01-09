@@ -23,4 +23,14 @@ trait PaginatorTrait
 
         return $paginator;
     }
+
+    /**
+     * @param Paginator $paginator
+     * @param ItemsPerPageAwareInterface $repository
+     * @return int
+     */
+    public function getMaxPage(Paginator $paginator): int
+    {
+        return ceil($paginator->count() / $this->getItemsPerPage());
+    }
 }

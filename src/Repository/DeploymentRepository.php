@@ -10,11 +10,13 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\QueryBuilder;
 use DeployTracker\Entity\Application;
 
-class DeploymentRepository extends EntityRepository implements ItemsPerPageAwareInterface
+class DeploymentRepository extends EntityRepository implements PaginatorInterface, FilterableInterface
 {
     use PaginatorTrait;
+    use FilterableTrait;
 
     const ITEMS_PER_PAGE = 50;
+    const AVAILABLE_FILTERS = ['deployer', 'stage', 'status'];
 
     /**
      * @param int $page
@@ -121,6 +123,30 @@ class DeploymentRepository extends EntityRepository implements ItemsPerPageAware
     }
 
     /**
+     * @param string $searchQuery
+     * @param int $page
+     * @param array $filter
+     * @return Paginator
+     */
+    public function search(string $searchQuery, int $page = 1, array $filters = []): Paginator
+    {
+        $qb = $this->createQueryBuilder('d')
+            ->join('d.application', 'a')
+            ->where('d.stage LIKE :search_query')
+            ->orWhere('d.branch LIKE :search_query')
+            ->orWhere('d.commitHash LIKE :search_query')
+            ->orWhere('d.deployer LIKE :search_query')
+            ->orWhere('a.name LIKE :search_query')
+            ->setParameter('search_query', '%' . $searchQuery . '%')
+            ->addOrderBy('d.id', 'DESC')
+            ->addOrderBy('d.deployDate', 'DESC');
+
+        $this->addFilters($qb, $filters);
+
+        return $this->paginate($qb->getQuery(), $page, $this->getItemsPerPage());
+    }
+
+    /**
      * @param Deployment $deployment
      * @return void
      */
@@ -168,6 +194,14 @@ class DeploymentRepository extends EntityRepository implements ItemsPerPageAware
     public function getItemsPerPage(): int
     {
         return self::ITEMS_PER_PAGE;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAvailableFilters(): array
+    {
+        return self::AVAILABLE_FILTERS;
     }
 
     /**

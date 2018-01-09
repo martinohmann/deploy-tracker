@@ -22,6 +22,11 @@ dashboard_application:
     requirements:
         id: \d+
 
+# DeployTracker\SearchController routes
+search_index:
+    path: /search
+    controller: DeployTracker\Controller\SearchController::index
+
 # DeployTracker\ApiController routes
 api_publish:
     path: /api/publish

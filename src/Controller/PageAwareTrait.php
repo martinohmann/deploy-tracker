@@ -2,7 +2,7 @@
 
 namespace DeployTracker\Controller;
 
-use DeployTracker\Repository\ItemsPerPageAwareInterface;
+use DeployTracker\Repository\PaginatorInterface;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,16 +18,6 @@ trait PageAwareTrait
         $page = (int) $request->query->get('page', 1);
 
         return $page < 1 ? 1 : $page;
-    }
-
-    /**
-     * @param Paginator $paginator
-     * @param ItemsPerPageAwareInterface $repository
-     * @return int
-     */
-    protected function getMaxPage(Paginator $paginator, ItemsPerPageAwareInterface $repository): int
-    {
-        return ceil($paginator->count() / $repository->getItemsPerPage());
     }
 
     /**

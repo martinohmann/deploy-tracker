@@ -6,7 +6,7 @@ use Doctrine\ORM\EntityRepository;
 use DeployTracker\Entity\Application;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 
-class ApplicationRepository extends EntityRepository implements ItemsPerPageAwareInterface
+class ApplicationRepository extends EntityRepository implements PaginatorInterface
 {
     use PaginatorTrait;
 

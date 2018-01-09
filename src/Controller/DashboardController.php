@@ -14,9 +14,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class DashboardController extends Controller
 {
     use PageAwareTrait;
-    use FilterAwareTrait;
-
-    const FILTER_PARAMS = ['deployer', 'stage', 'status'];
 
     /**
      * @param DeploymentRepository $repository
@@ -41,9 +38,9 @@ class DashboardController extends Controller
     public function recent(Request $request, DeploymentRepository $repository): Response
     {
         $page = $this->getPage($request);
-        $filters = $this->getFilters($request, self::FILTER_PARAMS);
+        $filters = $repository->getFiltersFromRequest($request);
         $deployments = $repository->findMostRecent($page, $filters);
-        $maxPage = $this->getMaxPage($deployments, $repository);
+        $maxPage = $repository->getMaxPage($deployments);
 
         if ($this->shouldRedirectToMaxPage($page, $maxPage)) {
             return $this->redirectToMaxPage($request, $maxPage);
@@ -65,9 +62,9 @@ class DashboardController extends Controller
     public function history(Request $request, DeploymentRepository $repository): Response
     {
         $page = $this->getPage($request);
-        $filters = $this->getFilters($request, self::FILTER_PARAMS);
+        $filters = $repository->getFiltersFromRequest($request);
         $deployments = $repository->findAll($page, $filters);
-        $maxPage = $this->getMaxPage($deployments, $repository);
+        $maxPage = $repository->getMaxPage($deployments);
 
         if ($this->shouldRedirectToMaxPage($page, $maxPage)) {
             return $this->redirectToMaxPage($request, $maxPage);
@@ -90,7 +87,7 @@ class DashboardController extends Controller
     {
         $page = $this->getPage($request);
         $applications = $repository->findAll($page);
-        $maxPage = $this->getMaxPage($applications, $repository);
+        $maxPage = $repository->getMaxPage($applications);
 
         if ($this->shouldRedirectToMaxPage($page, $maxPage)) {
             return $this->redirectToMaxPage($request, $maxPage);
@@ -123,9 +120,9 @@ class DashboardController extends Controller
         }
 
         $page = $this->getPage($request);
-        $filters = $this->getFilters($request, self::FILTER_PARAMS);
+        $filters = $deploymentRepository->getFiltersFromRequest($request);
         $deployments = $deploymentRepository->findAllForApplication($application, $page, $filters);
-        $maxPage = $this->getMaxPage($deployments, $deploymentRepository);
+        $maxPage = $deploymentRepository->getMaxPage($deployments);
 
         if ($this->shouldRedirectToMaxPage($page, $maxPage)) {
             return $this->redirectToMaxPage($request, $maxPage);
