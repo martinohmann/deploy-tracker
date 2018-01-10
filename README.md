@@ -21,5 +21,5 @@ Publish deployment to the API
 Via curl:
 
 ```shell
-$ curl -i -XPOST http://localhost:8001/api/publish\?auth_token\=thisisatoken -d 'application=theapplicationname&branch=master&stage=production&commit_hash=deadbeef&project_url=https://github.com/somenamespace/somerepo&deployer=deployername&status=success'
+$ curl -i -XPOST http://localhost:8001/api/publish\?auth_token\=thisisatoken -d 'application=theapplicationname&branch=master&stage=production&commit_hash=deadbeef&deployer=deployername&status=success'
 ```
