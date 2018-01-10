@@ -136,4 +136,26 @@ class DashboardController extends Controller
             'filters' => $filters,
         ]);
     }
+
+    /**
+     * @param Request $request
+     * @param DeploymentRepository $repository
+     * @return Response
+     */
+    public function deployerStats(Request $request, DeploymentRepository $repository): Response
+    {
+        $page = $this->getPage($request);
+        $deployers = $repository->getDeployerStats($page);
+        $maxPage = $repository->getMaxPage($deployers);
+
+        if ($this->shouldRedirectToMaxPage($page, $maxPage)) {
+            return $this->redirectToMaxPage($request, $maxPage);
+        }
+
+        return $this->render('dashboard/deployer-stats.html.twig', [
+            'deployers' => $deployers->getIterator(),
+            'page' => $page,
+            'maxPage' => $maxPage,
+        ]);
+    }
 }

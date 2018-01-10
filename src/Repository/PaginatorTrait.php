@@ -4,6 +4,7 @@ namespace DeployTracker\Repository;
 
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Tools\Pagination\Paginator;
+use Doctrine\ORM\AbstractQuery;
 
 trait PaginatorTrait
 {
@@ -15,7 +16,9 @@ trait PaginatorTrait
      */
     public function paginate(Query $query, int $page = 1, int $limit = 10): Paginator
     {
-        $paginator = new Paginator($query);
+        $fetchJoinCollection = $query->getHydrationMode() === AbstractQuery::HYDRATE_OBJECT;
+
+        $paginator = new Paginator($query, $fetchJoinCollection);
 
         $paginator->getQuery()
             ->setFirstResult($limit * ($page - 1))

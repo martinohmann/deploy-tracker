@@ -228,18 +228,26 @@ class Deployment
     }
 
     /**
-     * @return string
+     * @return ?string
      */
-    public function getBranchUrl(): string
+    public function getBranchUrl(): ?string
     {
+        if (null === $this->branch) {
+            return null;
+        }
+
         return sprintf('%s/tree/%s', $this->application->getProjectUrl(), $this->branch);
     }
 
     /**
      * @return string
      */
-    public function getCommitUrl(): string
+    public function getCommitUrl(): ?string
     {
+        if (null === $this->commitHash) {
+            return null;
+        }
+
         return sprintf('%s/commit/%s', $this->application->getProjectUrl(), $this->commitHash);
     }
 

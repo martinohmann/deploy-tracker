@@ -9,6 +9,7 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\QueryBuilder;
 use DeployTracker\Entity\Application;
+use Doctrine\ORM\AbstractQuery;
 
 class DeploymentRepository extends EntityRepository implements PaginatorInterface, FilterableInterface
 {
@@ -142,6 +143,51 @@ class DeploymentRepository extends EntityRepository implements PaginatorInterfac
         $this->addFilters($qb, $filters);
 
         return $this->paginate($qb->getQuery(), $page, $this->getItemsPerPage());
+    }
+
+    /**
+     * @param int $page
+     * @return Paginator
+     */
+    public function getDeployerStats(int $page = 1): Paginator
+    {
+        $query = $this->createQueryBuilder('d')
+            ->select([
+                'd.deployer as name',
+                'COUNT(d.id) as deploymentCount',
+                'COUNT(ds.id) as successCount',
+                'COUNT(dr.id) as rollbackCount',
+                'COUNT(dr.id) as failedCount',
+                'COUNT(DISTINCT(d.application)) as applicationCount',
+                'COUNT(DISTINCT(d.stage)) as stageCount',
+                'MAX(d.deployDate) as lastDeployDate',
+                'DATE_DIFF(MAX(d.deployDate), MIN(d.deployDate)) as trackedSinceDays',
+                'COUNT(d.id) / (DATE_DIFF(MAX(d.deployDate), MIN(d.deployDate)) / 7) as deploymentsPerWeek',
+            ])
+            ->leftJoin(
+                Deployment::class,
+                'ds',
+                Join::WITH,
+                "d.id = ds.id AND ds.status = 'success'"
+            )
+            ->leftJoin(
+                Deployment::class,
+                'dr',
+                Join::WITH,
+                "d.id = dr.id AND dr.status = 'rollback'"
+            )
+            ->leftJoin(
+                Deployment::class,
+                'df',
+                Join::WITH,
+                "d.id = df.id AND df.status = 'failed'"
+            )
+            ->addGroupBy('d.deployer')
+            ->orderBy('d.deployer', 'ASC')
+            ->getQuery()
+            ->setHydrationMode(AbstractQuery::HYDRATE_ARRAY);
+
+        return $this->paginate($query, $page, $this->getItemsPerPage());
     }
 
     /**

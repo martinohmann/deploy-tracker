@@ -1,0 +1,69 @@
+{% if deployers.count == 0 %}
+  <div class="alert alert-warning">
+    No tracked deployers available in the view.
+  </div>
+{% else %}
+  <table class="table table-striped table-responsive-md border">
+    <thead class="thead-light">
+      <tr>
+        <th scope="col">Name</th>
+        <th scope="col" class="text-right">Applications</th>
+        <th scope="col" class="text-right">Stages</th>
+        <th scope="col" class="text-right">Deployments</th>
+        <th scope="col" class="text-right">Successful</th>
+        <th scope="col" class="text-right">Rollbacks</th>
+        <th scope="col" class="text-right">Failed</th>
+        <th scope="col" class="text-center">Deploy frequency</th>
+        <th scope="col">Last deployment</th>
+        <th scope="col">Tracked since</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for deployer in deployers %}
+        <tr>
+          <th scope="row">
+            {{ deployer.name }}
+          </th>
+          <td class="text-right">
+            {{ deployer.applicationCount }}
+          </td>
+          <td class="text-right">
+            {{ deployer.stageCount }}
+          </td>
+          <td class="text-right">
+            <a class="text-dark" href="{{ path('dashboard_history', {deployer: deployer.name}) }}">
+              {{ deployer.deploymentCount }}
+            </a>
+          </td>
+          <td class="text-right">
+            <a class="text-success" href="{{ path('dashboard_history', {deployer: deployer.name, status: 'success'}) }}">
+              {{ deployer.successCount }}
+            </a>
+          </td>
+          <td class="text-right">
+            <a class="text-warning" href="{{ path('dashboard_history', {deployer: deployer.name, status: 'rollback'}) }}">
+              {{ deployer.rollbackCount }}
+            </a>
+          </td>
+          <td class="text-right">
+            <a class="text-danger" href="{{ path('dashboard_history', {name: deployer.name, status: 'failed'}) }}">
+              {{ deployer.failedCount }}
+            </a>
+          </td>
+          <td class="text-center">
+            <strong>{{ deployer.deploymentsPerWeek|number_format(2) }}</strong> per week
+          </td>
+          <td>
+            <span title="{{ deployer.lastDeployDate|date('Y-m-d H:i:s')}}">
+              {{ date(deployer.lastDeployDate)|fuzzy_date }}
+            </span>
+          </td>
+          <td>
+            {{ deployer.trackedSinceDays }} day{% if deployer.trackedSinceDays > 1 or deployer.trackedSinceDays == 0 %}s{% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% include 'fragment/pagination.html.twig' %}
+{% endif %}
