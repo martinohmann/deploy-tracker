@@ -49,8 +49,6 @@ class PublishRequestHandler
             ));
         }
 
-        $this->applicationRepository->persist($application);
-
         $deployDate = (new \DateTime())->setTimestamp($request->getTimestamp());
 
         $deployment = new Deployment();
