@@ -2,8 +2,8 @@
 
 namespace DeployTracker\Repository;
 
+use DeployTracker\ORM\Tools\Pagination\Paginator;
 use Doctrine\ORM\Query;
-use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\ORM\AbstractQuery;
 
 trait PaginatorTrait
@@ -18,22 +18,6 @@ trait PaginatorTrait
     {
         $fetchJoinCollection = $query->getHydrationMode() === AbstractQuery::HYDRATE_OBJECT;
 
-        $paginator = new Paginator($query, $fetchJoinCollection);
-
-        $paginator->getQuery()
-            ->setFirstResult($limit * ($page - 1))
-            ->setMaxResults($limit);
-
-        return $paginator;
-    }
-
-    /**
-     * @param Paginator $paginator
-     * @param ItemsPerPageAwareInterface $repository
-     * @return int
-     */
-    public function getMaxPage(Paginator $paginator): int
-    {
-        return ceil($paginator->count() / $this->getItemsPerPage());
+        return new Paginator($query, $page, $limit, $fetchJoinCollection);
     }
 }

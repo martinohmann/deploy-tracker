@@ -3,10 +3,8 @@
 namespace DeployTracker\Controller;
 
 use DeployTracker\Exception\RedirectToRouteException;
-use DeployTracker\Repository\PaginatorInterface;
-use Doctrine\ORM\Tools\Pagination\Paginator;
+use DeployTracker\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 trait PageAwareTrait
 {
@@ -23,12 +21,13 @@ trait PageAwareTrait
 
     /**
      * @param Request $request
-     * @param int $maxPage
+     * @param Paginator $paginator
      * @return void
      */
-    protected function validatePaging(Request $request, int $maxPage)
+    protected function validatePaging(Request $request, Paginator $paginator)
     {
-        $page = $this->getPage($request);
+        $page = $paginator->getPage();
+        $maxPage = $paginator->getMaxPage();
 
         if ($maxPage > 0 && $page > $maxPage) {
             $route = $request->attributes->get('_route');

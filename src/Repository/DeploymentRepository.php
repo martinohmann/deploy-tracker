@@ -3,9 +3,9 @@
 namespace DeployTracker\Repository;
 
 use DeployTracker\Entity\Deployment;
+use DeployTracker\ORM\Tools\Pagination\Paginator;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
-use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\QueryBuilder;
 use DeployTracker\Entity\Application;

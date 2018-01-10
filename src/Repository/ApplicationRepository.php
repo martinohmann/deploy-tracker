@@ -2,9 +2,9 @@
 
 namespace DeployTracker\Repository;
 
-use Doctrine\ORM\EntityRepository;
 use DeployTracker\Entity\Application;
-use Doctrine\ORM\Tools\Pagination\Paginator;
+use DeployTracker\ORM\Tools\Pagination\Paginator;
+use Doctrine\ORM\EntityRepository;
 
 class ApplicationRepository extends EntityRepository implements PaginatorInterface
 {

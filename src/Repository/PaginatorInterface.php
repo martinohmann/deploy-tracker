@@ -2,7 +2,7 @@
 
 namespace DeployTracker\Repository;
 
-use Doctrine\ORM\Tools\Pagination\Paginator;
+use DeployTracker\ORM\Tools\Pagination\Paginator;
 use Doctrine\ORM\Query;
 
 interface PaginatorInterface
@@ -14,12 +14,6 @@ interface PaginatorInterface
      * @return Paginator
      */
     public function paginate(Query $query, int $page = 1, int $limit = 10): Paginator;
-
-    /**
-     * @param Paginator $paginator
-     * @return int
-     */
-    public function getMaxPage(Paginator $paginator): int;
 
     /**
      * @return int
