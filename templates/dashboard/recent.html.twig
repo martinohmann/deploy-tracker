@@ -10,5 +10,5 @@
   <div class="alert alert-info">
     This view only shows the <strong>most recent deployment per stage</strong> for each application.
   </div>
-  {% include 'dashboard/grid/deployment.html.twig' %}
+  {% include 'dashboard/grid/deployment.html.twig' with {deployments: paginator.iterator} %}
 {% endblock %}

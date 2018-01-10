@@ -26,15 +26,12 @@ class SearchController extends Controller
 
         $page = $this->getPage($request);
         $filters = $repository->getFiltersFromRequest($request);
-        $results = $repository->search($searchQuery, $page, $filters);
+        $paginator = $repository->search($searchQuery, $page, $filters);
 
-        $this->validatePaging($request, $results);
+        $this->validatePagination($request, $paginator);
 
         return $this->render('search/index.html.twig', [
-            'results' => $results->getIterator(),
-            'totalResults' => $results->count(),
-            'page' => $page,
-            'maxPage' => $results->getMaxPage(),
+            'paginator' => $paginator,
             'searchQuery' => $searchQuery,
             'filters' => $filters,
         ]);

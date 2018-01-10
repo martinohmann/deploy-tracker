@@ -6,5 +6,5 @@
   <p class="lead">
     Applications
   </p>
-  {% include 'dashboard/grid/application.html.twig' %}
+  {% include 'dashboard/grid/application.html.twig' with {applications: paginator.iterator} %}
 {% endblock %}

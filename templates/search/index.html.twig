@@ -4,9 +4,9 @@
 
 {% block body %}
   <p class="lead">
-    <strong>{{ totalResults }}</strong> Search results for &quot;<strong>{{ searchQuery }}</strong>&quot;
+    <strong>{{ paginator.count }}</strong> Search results for &quot;<strong>{{ searchQuery }}</strong>&quot;
     {% include 'fragment/search-filters.html.twig' %}
   </p>
-  {% include 'search/grid/search-results.html.twig' %}
+  {% include 'search/grid/search-results.html.twig' with {results: paginator.iterator} %}
 {% endblock %}
 

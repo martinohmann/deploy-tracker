@@ -39,14 +39,12 @@ class DashboardController extends Controller
     {
         $page = $this->getPage($request);
         $filters = $repository->getFiltersFromRequest($request);
-        $deployments = $repository->findMostRecent($page, $filters);
+        $paginator = $repository->findMostRecent($page, $filters);
 
-        $this->validatePaging($request, $deployments);
+        $this->validatePagination($request, $paginator);
 
         return $this->render('dashboard/recent.html.twig', [
-            'deployments' => $deployments->getIterator(),
-            'page' => $page,
-            'maxPage' => $deployments->getMaxPage(),
+            'paginator' => $paginator,
             'filters' => $filters,
         ]);
     }
@@ -60,14 +58,12 @@ class DashboardController extends Controller
     {
         $page = $this->getPage($request);
         $filters = $repository->getFiltersFromRequest($request);
-        $deployments = $repository->findAll($page, $filters);
+        $paginator = $repository->findAll($page, $filters);
 
-        $this->validatePaging($request, $deployments);
+        $this->validatePagination($request, $paginator);
 
         return $this->render('dashboard/history.html.twig', [
-            'deployments' => $deployments->getIterator(),
-            'page' => $page,
-            'maxPage' => $deployments->getMaxPage(),
+            'paginator' => $paginator,
             'filters' => $filters,
         ]);
     }
@@ -80,15 +76,11 @@ class DashboardController extends Controller
     public function applications(Request $request, ApplicationRepository $repository): Response
     {
         $page = $this->getPage($request);
-        $applications = $repository->findAll($page);
+        $paginator = $repository->findAll($page);
 
-        $this->validatePaging($request, $applications);
+        $this->validatePagination($request, $paginator);
 
-        return $this->render('dashboard/applications.html.twig', [
-            'applications' => $applications->getIterator(),
-            'page' => $page,
-            'maxPage' => $applications->getMaxPage(),
-        ]);
+        return $this->render('dashboard/applications.html.twig', ['paginator' => $paginator]);
     }
 
     /**
@@ -112,15 +104,13 @@ class DashboardController extends Controller
 
         $page = $this->getPage($request);
         $filters = $deploymentRepository->getFiltersFromRequest($request);
-        $deployments = $deploymentRepository->findAllForApplication($application, $page, $filters);
+        $paginator = $deploymentRepository->findAllForApplication($application, $page, $filters);
 
-        $this->validatePaging($request, $deployments);
+        $this->validatePagination($request, $paginator);
 
         return $this->render('dashboard/application.html.twig', [
             'application' => $application,
-            'deployments' => $deployments->getIterator(),
-            'page' => $page,
-            'maxPage' => $deployments->getMaxPage(),
+            'paginator' => $paginator,
             'filters' => $filters,
         ]);
     }
@@ -133,14 +123,10 @@ class DashboardController extends Controller
     public function deployerStats(Request $request, DeploymentRepository $repository): Response
     {
         $page = $this->getPage($request);
-        $deployers = $repository->getDeployerStats($page);
+        $paginator = $repository->getDeployerStats($page);
 
-        $this->validatePaging($request, $deployers);
+        $this->validatePagination($request, $paginator);
 
-        return $this->render('dashboard/deployer-stats.html.twig', [
-            'deployers' => $deployers->getIterator(),
-            'page' => $page,
-            'maxPage' => $deployers->getMaxPage(),
-        ]);
+        return $this->render('dashboard/deployer-stats.html.twig', ['paginator' => $paginator]);
     }
 }

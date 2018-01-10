@@ -10,5 +10,5 @@
   <div class="alert alert-info">
     This view contains <strong>all deployments</strong> of the applications subscribed to the tracker.
   </div>
-  {% include 'dashboard/grid/deployment.html.twig' %}
+  {% include 'dashboard/grid/deployment.html.twig' with {deployments: paginator.iterator} %}
 {% endblock %}

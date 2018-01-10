@@ -1,4 +1,7 @@
-{% if maxPage > 1 %}
+{% if paginator is defined and paginator.maxPage > 1 %}
+  {% set page = paginator.page %}
+  {% set maxPage = paginator.maxPage %}
+
   {# the number of first and last pages to be displayed #}
   {% set extremePagesLimit = 1 %}
 

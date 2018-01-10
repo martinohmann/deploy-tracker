@@ -7,5 +7,5 @@
     Deployment history for <strong>{{ application.name }}</strong>
     {% include 'fragment/filters.html.twig' %}
   </p>
-  {% include 'dashboard/grid/application-deployment.html.twig' %}
+  {% include 'dashboard/grid/application-deployment.html.twig' with {deployments: paginator.iterator} %}
 {% endblock %}

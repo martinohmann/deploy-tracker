@@ -6,5 +6,5 @@
   <p class="lead">
     Deployer Stats
   </p>
-  {% include 'dashboard/grid/deployer.html.twig' %}
+  {% include 'dashboard/grid/deployer.html.twig' with {deployers: paginator.iterator} %}
 {% endblock %}

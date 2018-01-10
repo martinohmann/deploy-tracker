@@ -24,7 +24,7 @@ trait PageAwareTrait
      * @param Paginator $paginator
      * @return void
      */
-    protected function validatePaging(Request $request, Paginator $paginator)
+    protected function validatePagination(Request $request, Paginator $paginator)
     {
         $page = $paginator->getPage();
         $maxPage = $paginator->getMaxPage();
