@@ -42,9 +42,7 @@ class DashboardController extends Controller
         $deployments = $repository->findMostRecent($page, $filters);
         $maxPage = $repository->getMaxPage($deployments);
 
-        if ($this->shouldRedirectToMaxPage($page, $maxPage)) {
-            return $this->redirectToMaxPage($request, $maxPage);
-        }
+        $this->validatePaging($request, $maxPage);
 
         return $this->render('dashboard/recent.html.twig', [
             'deployments' => $deployments->getIterator(),
@@ -66,9 +64,7 @@ class DashboardController extends Controller
         $deployments = $repository->findAll($page, $filters);
         $maxPage = $repository->getMaxPage($deployments);
 
-        if ($this->shouldRedirectToMaxPage($page, $maxPage)) {
-            return $this->redirectToMaxPage($request, $maxPage);
-        }
+        $this->validatePaging($request, $maxPage);
 
         return $this->render('dashboard/history.html.twig', [
             'deployments' => $deployments->getIterator(),
@@ -89,9 +85,7 @@ class DashboardController extends Controller
         $applications = $repository->findAll($page);
         $maxPage = $repository->getMaxPage($applications);
 
-        if ($this->shouldRedirectToMaxPage($page, $maxPage)) {
-            return $this->redirectToMaxPage($request, $maxPage);
-        }
+        $this->validatePaging($request, $maxPage);
 
         return $this->render('dashboard/applications.html.twig', [
             'applications' => $applications->getIterator(),
@@ -124,9 +118,7 @@ class DashboardController extends Controller
         $deployments = $deploymentRepository->findAllForApplication($application, $page, $filters);
         $maxPage = $deploymentRepository->getMaxPage($deployments);
 
-        if ($this->shouldRedirectToMaxPage($page, $maxPage)) {
-            return $this->redirectToMaxPage($request, $maxPage);
-        }
+        $this->validatePaging($request, $maxPage);
 
         return $this->render('dashboard/application.html.twig', [
             'application' => $application,
@@ -148,9 +140,7 @@ class DashboardController extends Controller
         $deployers = $repository->getDeployerStats($page);
         $maxPage = $repository->getMaxPage($deployers);
 
-        if ($this->shouldRedirectToMaxPage($page, $maxPage)) {
-            return $this->redirectToMaxPage($request, $maxPage);
-        }
+        $this->validatePaging($request, $maxPage);
 
         return $this->render('dashboard/deployer-stats.html.twig', [
             'deployers' => $deployers->getIterator(),

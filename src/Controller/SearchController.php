@@ -29,9 +29,7 @@ class SearchController extends Controller
         $results = $repository->search($searchQuery, $page, $filters);
         $maxPage = $repository->getMaxPage($results);
 
-        if ($this->shouldRedirectToMaxPage($page, $maxPage)) {
-            return $this->redirectToMaxPage($request, $maxPage);
-        }
+        $this->validatePaging($request, $maxPage);
 
         return $this->render('search/index.html.twig', [
             'results' => $results->getIterator(),

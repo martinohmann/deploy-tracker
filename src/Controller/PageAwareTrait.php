@@ -2,6 +2,7 @@
 
 namespace DeployTracker\Controller;
 
+use DeployTracker\Exception\RedirectToRouteException;
 use DeployTracker\Repository\PaginatorInterface;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,25 +22,20 @@ trait PageAwareTrait
     }
 
     /**
-     * @param int $page
-     * @param int $maxPage
-     * @return bool
-     */
-    protected function shouldRedirectToMaxPage(int $page, int $maxPage): bool
-    {
-        return $maxPage > 0 && $page > $maxPage;
-    }
-
-    /**
      * @param Request $request
      * @param int $maxPage
-     * @return Response
+     * @return void
      */
-    protected function redirectToMaxPage(Request $request, int $maxPage): Response
+    protected function validatePaging(Request $request, int $maxPage)
     {
-        $route = $request->attributes->get('_route');
-        $routeParams = $request->attributes->get('_route_params');
+        $page = $this->getPage($request);
 
-        return $this->redirectToRoute($route, array_merge($routeParams, ['page' => $maxPage]));
+        if ($maxPage > 0 && $page > $maxPage) {
+            $route = $request->attributes->get('_route');
+            $routeParams = $request->attributes->get('_route_params');
+            $parameters = array_merge($routeParams, ['page' => $maxPage]);
+
+            throw new RedirectToRouteException($route, $parameters);
+        }
     }
 }
