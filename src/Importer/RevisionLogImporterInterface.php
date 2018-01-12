@@ -4,7 +4,7 @@ namespace DeployTracker\Importer;
 
 use DeployTracker\Entity\Application;
 
-interface ImporterInterface
+interface RevisionLogImporterInterface
 {
     /**
      * @param string $filename

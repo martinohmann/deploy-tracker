@@ -12,7 +12,7 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use DeployTracker\Parser\RevisionLogParserInterface;
 
-class CapistranoRevisionLogImporter implements ImporterInterface, LoggerAwareInterface
+class CapistranoRevisionLogImporter implements RevisionLogImporterInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
