@@ -157,12 +157,13 @@ class DeploymentRepository extends EntityRepository implements PaginatorInterfac
                 'COUNT(d.id) as deploymentCount',
                 'COUNT(ds.id) as successCount',
                 'COUNT(dr.id) as rollbackCount',
-                'COUNT(dr.id) as failedCount',
+                'COUNT(df.id) as failedCount',
                 'COUNT(DISTINCT(d.application)) as applicationCount',
                 'COUNT(DISTINCT(d.stage)) as stageCount',
                 'MAX(d.deployDate) as lastDeployDate',
                 'DATE_DIFF(MAX(d.deployDate), MIN(d.deployDate)) as trackedSinceDays',
                 'COUNT(d.id) / (DATE_DIFF(MAX(d.deployDate), MIN(d.deployDate)) / 7) as deploymentsPerWeek',
+                '(COUNT(df.id) / COUNT(d.id) * 100) as failureRate',
             ])
             ->leftJoin(
                 Deployment::class,

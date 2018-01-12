@@ -13,6 +13,7 @@
         <th scope="col" class="text-right">Successful</th>
         <th scope="col" class="text-right">Rollbacks</th>
         <th scope="col" class="text-right">Failed</th>
+        <th scope="col" class="text-center">Success Ratio</th>
         <th scope="col" class="text-center">Deploy frequency</th>
         <th scope="col">Last deployment</th>
         <th scope="col">Tracked since</th>
@@ -49,6 +50,9 @@
             <a class="text-danger" href="{{ path('dashboard_history', {name: deployer.name, status: 'failed'}) }}">
               {{ deployer.failedCount }}
             </a>
+          </td>
+          <td class="text-center">
+            {{ deployer.failureRate|number_format(2) }}%
           </td>
           <td class="text-center">
             <strong>{{ deployer.deploymentsPerWeek|number_format(2) }}</strong> per week
