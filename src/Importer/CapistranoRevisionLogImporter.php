@@ -10,19 +10,21 @@ use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
+use DeployTracker\Parser\RevisionLogParserInterface;
 
 class CapistranoRevisionLogImporter implements ImporterInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    const PATTERN_ROLLBACK = '/^(.+) rolled back to release (\d{14})$/';
-    const PATTERN_RELEASE = '/^Branch (.+) \(at ([0-9a-f]+)\) deployed as release (\d{14}) by (.+)$/';
-    const RELEASE_DATE_FMT = 'YmdHis';
-
     /**
      * @var DeploymentRepository
      */
     private $repository;
+
+    /**
+     * @var RevisionLogParserInterface
+     */
+    private $parser;
 
     /**
      * @var Application
@@ -36,11 +38,16 @@ class CapistranoRevisionLogImporter implements ImporterInterface, LoggerAwareInt
 
     /**
      * @param DeploymentRepository $repository
+     * @param RevisionLogParserInterface $parser
      * @param LoggerInterface $logger
      */
-    public function __construct(DeploymentRepository $repository, LoggerInterface $logger = null)
-    {
+    public function __construct(
+        DeploymentRepository $repository,
+        RevisionLogParserInterface $parser,
+        LoggerInterface $logger = null
+    ) {
         $this->repository = $repository;
+        $this->parser = $parser;
         $this->logger = $logger ?: new NullLogger();
     }
 
@@ -79,19 +86,22 @@ class CapistranoRevisionLogImporter implements ImporterInterface, LoggerAwareInt
         $previous = null;
 
         foreach ($this->getFileContents($filename) as $line) {
-            $matches = [];
+            try {
+                $parsed = $this->parser->parseLine($line);
+            } catch (RevisionLogParseException $e) {
+                $this->logger->error($e->getMessage());
+                continue;
+            }
 
-            if ($this->matchRelease($line, $matches)) {
-                $deployment = $this->createRelease($matches);
-
+            if ($parsed->isSuccess()) {
                 if (null !== $previous && $previous->isRollback()) {
-                    $this->processRollback($previous, $deployment);
+                    $this->processRollback($previous, $parsed);
 
                     $collection->add($previous);
                 }
 
-                $collection->add($deployment);
-            } elseif ($this->matchRollback($line, $matches)) {
+                $collection->add($parsed);
+            } elseif ($parsed->isRollback()) {
                 if (null === $previous || $previous->isRollback()) {
                     $this->logger->warn(sprintf(
                         'Unable to determine previous deployment for rollback "%s", skipping.',
@@ -100,22 +110,24 @@ class CapistranoRevisionLogImporter implements ImporterInterface, LoggerAwareInt
                     continue;
                 }
 
-                $deployment = $this->createRollback($matches, $previous);
-            } else {
-                $this->logger->warn(sprintf(
-                    'Unable to parse line "%s", skipping.',
-                    $line
-                ));
-                continue;
+                $parsed->setDeployDate(clone $previous->getDeployDate());
             }
 
-            $previous = $deployment;
+            $parsed
+                ->setApplication($this->application)
+                ->setStage($this->stage);
+
+            $previous = $parsed;
         }
 
         return $collection;
     }
 
     /**
+     * Sets an estimated date on a rollback based on the deployment before and
+     * after the rollback. This is required as the default capistrano revision
+     * log format does not include rollback timestamps.
+     *
      * @param Deployment $rollback
      * @param Deployment $current
      * @return void
@@ -131,61 +143,6 @@ class CapistranoRevisionLogImporter implements ImporterInterface, LoggerAwareInt
 
         $rollbackDate->setTimestamp($estimatedTimestamp);
     }
-
-    /**
-     * @param string $line
-     * @param array $matches
-     * @return int
-     */
-    private function matchRelease(string $line, array &$matches): int
-    {
-        return preg_match(self::PATTERN_RELEASE, $line, $matches);
-    }
-
-    /**
-     * @param string $line
-     * @param array $matches
-     * @return int
-     */
-    private function matchRollback(string $line, array &$matches): int
-    {
-        return preg_match(self::PATTERN_ROLLBACK, $line, $matches);
-    }
-
-    /**
-     * @param array $matches
-     * @return Deployment
-     */
-    private function createRelease(array $matches): Deployment
-    {
-        $deployment = new Deployment();
-        $deployment->setStage($this->stage)
-            ->setBranch($matches[1])
-            ->setCommitHash($matches[2])
-            ->setDeployDate($this->parseReleaseDate($matches[3]))
-            ->setDeployer($matches[4])
-            ->setApplication($this->application)
-            ->setStatus(Deployment::STATUS_SUCCESS);
-
-        return $deployment;
-    }
-
-    /**
-     * @param array $matches
-     * @param Deployment $previous
-     * @return Deployment
-     */
-    private function createRollback(array $matches, Deployment $previous): Deployment
-    {
-        $rollback = new Deployment();
-        $rollback->setStage($this->stage)
-            ->setDeployDate(clone $previous->getDeployDate())
-            ->setDeployer($matches[1])
-            ->setApplication($this->application)
-            ->setStatus(Deployment::STATUS_ROLLBACK);
-
-        return $rollback;
-    }
     
     /**
      * @param string $filename
@@ -194,14 +151,5 @@ class CapistranoRevisionLogImporter implements ImporterInterface, LoggerAwareInt
     private function getFileContents(string $filename): array
     {
         return file($filename, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-    }
-
-    /**
-     * @param string $dateString
-     * @return \DateTime
-     */
-    private function parseReleaseDate(string $dateString): \DateTime
-    {
-        return \DateTime::createFromFormat(self::RELEASE_DATE_FMT, $dateString);
     }
 }
