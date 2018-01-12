@@ -42,7 +42,7 @@ class ApiAuthTokenSubscriber implements EventSubscriberInterface
 
         $controller = $event->getController();
 
-        if ($controller[0] instanceof ApiController) {
+        if (is_array($controller) && $controller[0] instanceof ApiController) {
             $request = $event->getRequest();
 
             if ($request->query->get($this->authTokenParam) !== $this->authToken) {
