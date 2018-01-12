@@ -12,7 +12,7 @@ class DateExtension extends \Twig_Extension
     public function getFilters()
     {
         return [
-            new \Twig_SimpleFilter('fuzzy_date', [DateUtil::class, 'getFuzzyDate']),
+            new \Twig_SimpleFilter('fuzzy_date', [DateUtil::class, 'formatFuzzy']),
         ];
     }
 }
