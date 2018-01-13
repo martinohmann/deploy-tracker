@@ -24,7 +24,7 @@ trait FilterableTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @return array
      */
-    public abstract function getAvailableFilters();
+    public abstract function getAvailableFilters(): array;
 }
