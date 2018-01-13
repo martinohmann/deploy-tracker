@@ -22,4 +22,9 @@ trait FilterableTrait
 
         return $filters;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public abstract function getAvailableFilters();
 }

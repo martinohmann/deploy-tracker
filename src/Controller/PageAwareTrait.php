@@ -30,8 +30,8 @@ trait PageAwareTrait
         $maxPage = $paginator->getMaxPage();
 
         if ($maxPage > 0 && $page > $maxPage) {
-            $route = $request->attributes->get('_route');
-            $routeParams = $request->attributes->get('_route_params');
+            $route = (string) $request->attributes->get('_route');
+            $routeParams = (array) $request->attributes->get('_route_params');
             $parameters = array_merge($routeParams, ['page' => $maxPage]);
 
             throw new RedirectToRouteException($route, $parameters);
