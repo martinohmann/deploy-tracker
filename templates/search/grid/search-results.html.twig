@@ -20,18 +20,18 @@
         <tr>
           <th scope="row">
             <a class="text-dark" href="{{ path('dashboard_application', {id: result.application.id}) }}">
-              {{ result.application.name }}
+              {{ result.application.name|highlight(searchQuery) }}
             </a>
           </th>
           <td>
             <a class="text-dark" href="{{ path(route_name(), route_params(filters|merge({q: searchQuery, stage: result.stage}))) }}">
-              {{ result.stage }}
+              {{ result.stage|highlight(searchQuery) }}
             </a>
           </td>
           <td>
             {% if result.branch %}
               <a class="badge badge-info" href="{{ result.branchUrl }}" target="_blank">
-                {{ result.branch }}
+                {{ result.branch|highlight(searchQuery) }}
               </a>
             {% else %}
               -
@@ -40,7 +40,7 @@
           <td>
             {% if result.commitUrl %}
               <a class="text-dark" href="{{ result.commitUrl }}" target="_blank" title="{{ result.commitHash }}">
-                {{ result.commitHash|slice(0, 12) }}
+                {{ result.commitHash|slice(0, 12)|highlight(searchQuery) }}
               </a>
             {% else %}
               -
@@ -48,7 +48,7 @@
           </td>
           <td>
             <a class="text-dark" href="{{ path(route_name(), route_params(filters|merge({q: searchQuery, deployer: result.deployer}))) }}">
-              {{ result.deployer }}
+              {{ result.deployer|highlight(searchQuery) }}
             </a>
           </td>
           <td>
