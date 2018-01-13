@@ -9,6 +9,7 @@ Development
 -----------
 
 ```
+$ cp .env.dist .env # edit to your needs
 $ docker-compose up -d
 $ composer install
 $ bin/console doctrine:schema:create
