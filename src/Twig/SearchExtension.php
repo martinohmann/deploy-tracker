@@ -4,6 +4,9 @@ namespace DeployTracker\Twig;
 
 class SearchExtension extends \Twig_Extension
 {
+    const HIGHLIGHT_PREFIX = '<span class="text-dark bg-warning">';
+    const HIGHLIGHT_SUFFIX = '</span>';
+
     /**
      * {@inheritdoc}
      */
@@ -25,7 +28,8 @@ class SearchExtension extends \Twig_Extension
      */
     public function highlight(string $content, string $subject): string
     {
-        $replacement = sprintf('<span class="text-dark bg-warning">%s</span>', $subject);
+        $replacement = sprintf('%s%s%s', self::HIGHLIGHT_PREFIX, $subject, self::HIGHLIGHT_SUFFIX);
+
         return str_replace($subject, $replacement, $content);
     }
 }
