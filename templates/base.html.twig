@@ -39,9 +39,8 @@
           </a>
         </span>
         <form id="search-form" class="form-inline my-2 my-lg-0" action="{{ path('search_index') }}">
-          <input class="form-control mr-sm-2" type="search" name="q" placeholder="Search" aria-label="Search">
-          <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Search</button>
-        </form>
+            <input class="form-control mr-sm-2" type="search" name="q" placeholder="Search" {% if searchQuery is defined %}value="{{ searchQuery }}" {% endif %}aria-label="Search">
+          <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Search</button> </form>
       </div>
     </header>
     <div class="container-fluid mt-4">
