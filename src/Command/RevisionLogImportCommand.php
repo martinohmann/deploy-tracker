@@ -2,26 +2,30 @@
 
 namespace DeployTracker\Command;
 
-use DeployTracker\Importer\CapistranoRevisionLogImporter;
+use DeployTracker\Importer\RevisionLogImporterFactory;
 use DeployTracker\Repository\ApplicationRepository;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Logger\ConsoleLogger;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Input\InputOption;
+use Psr\Log\LoggerAwareInterface;
 
-class CapistranoImportCommand extends Command
+class RevisionLogImportCommand extends Command
 {
-    const NAME = 'deploy-tracker:capistrano:import';
+    const NAME = 'deploy-tracker:revision-log:import';
 
     const ARGUMENT_APPLICATION_NAME = 'application-name';
     const ARGUMENT_STAGE = 'stage';
     const ARGUMENT_REVISON_LOG = 'revision-log';
 
+    const OPTION_FORMAT = 'format';
+
     /**
-     * @var CapistranoRevisionLogImporter
+     * @var RevisionLogImporterFactory
      */
-    private $importer;
+    private $importerFactory;
 
     /**
      * @var ApplicationRepository
@@ -29,12 +33,12 @@ class CapistranoImportCommand extends Command
     private $repository;
 
     /**
-     * @param CapistranoRevisionLogImporter $importer
+     * @param RevisionLogImporterFactory $importerFactory
      * @param ApplicationRepository $repository
      */
-    public function __construct(CapistranoRevisionLogImporter $importer, ApplicationRepository $repository)
+    public function __construct(RevisionLogImporterFactory $importerFactory, ApplicationRepository $repository)
     {
-        $this->importer = $importer;
+        $this->importerFactory = $importerFactory;
         $this->repository = $repository;
 
         parent::__construct();
@@ -45,14 +49,10 @@ class CapistranoImportCommand extends Command
      */
     protected function configure()
     {
-        $this->setName(self::NAME)
-            ->setDescription('Imports deployment information from a Capistrano revision log file.')
-            ->setHelp("This command imports deployment information from a Capistrano revision log file.\n" .
-                'Keep in mind that this will not produce very accurate results for rollbacks as ' .
-                "these do not contain date information.\n" .
-                'In this case an estimated rollback date will be calculated based on the previous ' .
-                "and the next deployment, if possible.\n" .
-                'Also, failed deployments are not included.')
+        $this
+            ->setName(self::NAME)
+            ->setDescription('Imports deployment history from a revision log file.')
+            ->setHelp('This command imports deployment history from a revision log file.')
             ->addArgument(
                 self::ARGUMENT_APPLICATION_NAME,
                 InputArgument::REQUIRED,
@@ -67,6 +67,13 @@ class CapistranoImportCommand extends Command
                 self::ARGUMENT_REVISON_LOG,
                 InputArgument::REQUIRED,
                 'The path to the revision log file to import.'
+            )
+            ->addOption(
+                self::OPTION_FORMAT,
+                null,
+                InputOption::VALUE_REQUIRED,
+                'The revision log format.',
+                'capistrano'
             );
     }
 
@@ -78,6 +85,7 @@ class CapistranoImportCommand extends Command
         $applicationName = $input->getArgument(self::ARGUMENT_APPLICATION_NAME);
         $stage = $input->getArgument(self::ARGUMENT_STAGE);
         $filename = $input->getArgument(self::ARGUMENT_REVISON_LOG);
+        $format = $input->getOption(self::OPTION_FORMAT);
 
         $application = $this->repository->findOneByName($applicationName);
 
@@ -88,8 +96,13 @@ class CapistranoImportCommand extends Command
             ));
         }
 
-        $this->importer->setLogger(new ConsoleLogger($output));
-        $this->importer->import($filename, $application, $stage);
+        $importer = $this->importerFactory->create($format);
+
+        if ($importer instanceof LoggerAwareInterface) {
+            $importer->setLogger(new ConsoleLogger($output));
+        }
+
+        $importer->import($filename, $application, $stage);
 
         $output->writeln('<info>Revision log import finished.</info>');
     }
