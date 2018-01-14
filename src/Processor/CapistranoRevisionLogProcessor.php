@@ -9,9 +9,12 @@ use DeployTracker\Parser\RevisionLogParserInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Psr\Log\NullLogger;
 use Psr\Log\LoggerInterface;
+use Psr\Log\LoggerAwareTrait;
 
 class CapistranoRevisionLogProcessor implements RevisionLogProcessorInterface
 {
+    use LoggerAwareTrait;
+
     /**
      * @var RevisionLogParserInterface
      */
@@ -26,11 +29,6 @@ class CapistranoRevisionLogProcessor implements RevisionLogProcessorInterface
      * @var string
      */
     private $stage;
-
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
 
     /**
      * @param RevisionLogParserInterface $parser
@@ -76,7 +74,7 @@ class CapistranoRevisionLogProcessor implements RevisionLogProcessorInterface
                 $collection->add($parsed);
             } elseif ($parsed->isRollback()) {
                 if (null === $previous || $previous->isRollback()) {
-                    $this->logger->warn(sprintf(
+                    $this->logger->warning(sprintf(
                         'Unable to determine previous deployment for rollback "%s", skipping.',
                         $line
                     ));
