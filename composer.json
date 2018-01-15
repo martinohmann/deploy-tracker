@@ -9,6 +9,7 @@
         "doctrine/orm": "^2.6",
         "jms/serializer-bundle": "^2.3",
         "symfony/console": "^4.0",
+        "symfony/dotenv": "^4.0",
         "symfony/flex": "^1.0",
         "symfony/form": "^4.0",
         "symfony/framework-bundle": "^4.0",
@@ -21,7 +22,6 @@
     "require-dev": {
         "phake/phake": "^3.0",
         "phpunit/phpunit": "^6.5",
-        "symfony/dotenv": "^4.0",
         "symfony/profiler-pack": "^1.0",
         "symfony/web-server-bundle": "^4.0"
     },
