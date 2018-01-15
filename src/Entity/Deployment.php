@@ -232,7 +232,7 @@ class Deployment
      */
     public function getBranchUrl(): ?string
     {
-        if (null === $this->branch) {
+        if (null === $this->branch || null === $this->application) {
             return null;
         }
 
@@ -244,7 +244,7 @@ class Deployment
      */
     public function getCommitUrl(): ?string
     {
-        if (null === $this->commitHash) {
+        if (null === $this->commitHash || null === $this->application) {
             return null;
         }
 
@@ -273,5 +273,45 @@ class Deployment
     public function isFailed(): bool
     {
         return $this->status === self::STATUS_FAILED;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasUnknownStatus(): bool
+    {
+        return ($this->status !== self::STATUS_SUCCESS
+            && $this->status !== self::STATUS_ROLLBACK
+            && $this->status !== self::STATUS_FAILED);
+    }
+
+    /**
+     * @return self
+     */
+    public function markAsSuccess(): self
+    {
+        $this->setStatus(self::STATUS_SUCCESS);
+
+        return $this;
+    }
+
+    /**
+     * @return self
+     */
+    public function markAsRollback(): self
+    {
+        $this->setStatus(self::STATUS_ROLLBACK);
+
+        return $this;
+    }
+
+    /**
+     * @return self
+     */
+    public function markAsFailed(): self
+    {
+        $this->setStatus(self::STATUS_FAILED);
+
+        return $this;
     }
 }

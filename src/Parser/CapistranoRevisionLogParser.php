@@ -63,7 +63,7 @@ class CapistranoRevisionLogParser implements RevisionLogParserInterface
             ->setCommitHash($matches[2])
             ->setDeployDate($this->parseReleaseDate($matches[3]))
             ->setDeployer($matches[4])
-            ->setStatus(Deployment::STATUS_SUCCESS);
+            ->markAsSuccess();
     }
 
     /**
@@ -74,7 +74,7 @@ class CapistranoRevisionLogParser implements RevisionLogParserInterface
     {
         return (new Deployment())
             ->setDeployer($matches[1])
-            ->setStatus(Deployment::STATUS_ROLLBACK);
+            ->markAsRollback();
     }
 
     /**
