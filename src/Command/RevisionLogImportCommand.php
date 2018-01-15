@@ -20,7 +20,7 @@ class RevisionLogImportCommand extends Command
     const ARGUMENT_STAGE = 'stage';
     const ARGUMENT_REVISON_LOG = 'revision-log';
 
-    const OPTION_FORMAT = 'format';
+    const OPTION_IMPORTER = 'importer';
 
     /**
      * @var RevisionLogImporterFactory
@@ -69,10 +69,10 @@ class RevisionLogImportCommand extends Command
                 'The path to the revision log file to import.'
             )
             ->addOption(
-                self::OPTION_FORMAT,
+                self::OPTION_IMPORTER,
                 null,
                 InputOption::VALUE_REQUIRED,
-                'The revision log format.',
+                'The importer to use.',
                 'capistrano'
             );
     }
@@ -85,7 +85,7 @@ class RevisionLogImportCommand extends Command
         $applicationName = $input->getArgument(self::ARGUMENT_APPLICATION_NAME);
         $stage = $input->getArgument(self::ARGUMENT_STAGE);
         $filename = $input->getArgument(self::ARGUMENT_REVISON_LOG);
-        $format = $input->getOption(self::OPTION_FORMAT);
+        $importerType = $input->getOption(self::OPTION_IMPORTER);
 
         $application = $this->repository->findOneByName($applicationName);
 
@@ -96,7 +96,7 @@ class RevisionLogImportCommand extends Command
             ));
         }
 
-        $importer = $this->importerFactory->create($format);
+        $importer = $this->importerFactory->create($importerType);
 
         if ($importer instanceof LoggerAwareInterface) {
             $importer->setLogger(new ConsoleLogger($output));
