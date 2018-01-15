@@ -9,6 +9,18 @@ class DateUtilTest extends TestCase
 {
     /**
      * @test
+     */
+    public function shouldCreateDateFromTimestamp()
+    {
+        $timestamp = 1234567890;
+
+        $date = DateUtil::createFromTimestamp($timestamp);
+
+        self::assertSame($timestamp, $date->getTimestamp());
+    }
+
+    /**
+     * @test
      * @dataProvider fuzzyDateProvider
      */
     public function shouldProduceCorrectFuzzyDate($given, $expected)

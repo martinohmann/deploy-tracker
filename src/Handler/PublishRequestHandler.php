@@ -8,6 +8,7 @@ use DeployTracker\Entity\PublishRequest;
 use DeployTracker\Exception\PublishRequestException;
 use DeployTracker\Repository\ApplicationRepository;
 use DeployTracker\Repository\DeploymentRepository;
+use DeployTracker\Util\DateUtil;
 
 class PublishRequestHandler
 {
@@ -49,15 +50,13 @@ class PublishRequestHandler
             ));
         }
 
-        $deployDate = (new \DateTime())->setTimestamp($request->getTimestamp());
-
         $deployment = new Deployment();
         $deployment->setApplication($application)
             ->setStage($request->getStage())
             ->setBranch($request->getBranch())
             ->setCommitHash($request->getCommitHash())
             ->setDeployer($request->getDeployer())
-            ->setDeployDate($deployDate)
+            ->setDeployDate(DateUtil::createFromTimestamp((int) $request->getTimestamp()))
             ->setStatus($request->getStatus());
 
         $this->deploymentRepository->persist($deployment);

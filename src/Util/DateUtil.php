@@ -49,4 +49,13 @@ class DateUtil
             }
         }
     }
+
+    /**
+     * @param int $timestamp
+     * @return \DateTimeInterface
+     */
+    public static function createFromTimestamp(int $timestamp): \DateTimeInterface
+    {
+        return (new \DateTime())->setTimestamp($timestamp);
+    }
 }
