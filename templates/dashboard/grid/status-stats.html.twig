@@ -1,0 +1,55 @@
+<table class="table table-striped table-responsive-md border">
+  <thead class="thead-light">
+    <tr>
+      <th scope="col">Status</th>
+      <th scope="col" class="text-right">#</th>
+      <th scope="col" class="text-right">Percentage</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <span class="badge badge-success">success</span>
+      </th>
+      <td class="text-right">
+        {{ stats.successful }}
+      </td>
+      <td class="text-right">
+        {{ stats.successPercentage|number_format(2) }}%
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <span class="badge badge-warning">rollback</span>
+      </th>
+      <td class="text-right">
+        {{ stats.rollbacks }}
+      </td>
+      <td class="text-right">
+        {{ stats.rollbackPercentage|number_format(2) }}%
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <span class="badge badge-danger">failed</span>
+      </th>
+      <td class="text-right">
+        {{ stats.failed }}
+      </td>
+      <td class="text-right">
+        {{ stats.failedPercentage|number_format(2) }}%
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <span class="badge badge-secondary">unknown</span>
+      </th>
+      <td class="text-right">
+        {{ stats.unknown }}
+      </td>
+      <td class="text-right">
+        {{ stats.unknownPercentage|number_format(2) }}%
+      </td>
+    </tr>
+  </tbody>
+</table>

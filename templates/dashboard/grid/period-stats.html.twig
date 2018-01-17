@@ -1,0 +1,55 @@
+<table class="table table-striped table-responsive-md border">
+  <thead class="thead-light">
+    <tr>
+      <th scope="col">Period</th>
+      <th scope="col" class="text-right">Average</th>
+      <th scope="col" class="text-right"># Last Period</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        Daily
+      </th>
+      <td class="text-right">
+        {{ stats.avgPerDay|number_format(2) }}
+      </td>
+      <td class="text-right">
+        {{ stats.last24h|number_format }}
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        Weekly
+      </th>
+      <td class="text-right">
+        {{ stats.avgPerWeek|number_format(2) }}
+      </td>
+      <td class="text-right">
+        {{ stats.lastWeek|number_format }}
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        Monthly
+      </th>
+      <td class="text-right">
+        {{ stats.avgPerMonth|number_format(2) }}
+      </td>
+      <td class="text-right">
+        {{ stats.lastMonth|number_format }}
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        Annually
+      </th>
+      <td class="text-right">
+        {{ stats.avgPerYear|number_format(2) }}
+      </td>
+      <td class="text-right">
+        {{ stats.lastYear|number_format }}
+      </td>
+    </tr>
+  </tbody>
+</table>

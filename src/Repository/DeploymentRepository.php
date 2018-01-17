@@ -40,7 +40,7 @@ class DeploymentRepository extends EntityRepository implements PaginatorInterfac
      * @param array $filters
      * @return Paginator
      */
-    public function findAllForApplication(Application $application, int $page = 1, array $filters = []): Paginator
+    public function findByApplication(Application $application, int $page = 1, array $filters = []): Paginator
     {
         $qb = $this->createQueryBuilder('d')
             ->where('d.application = :application_id')
@@ -106,11 +106,38 @@ class DeploymentRepository extends EntityRepository implements PaginatorInterfac
     }
 
     /**
+     * @param int $limit
+     * @return array
+     */
+    public function findSuccessfulCounts(int $limit = 5): array
+    {
+        return $this->findCountsByStatus(Deployment::STATUS_SUCCESS, $limit);
+    }
+
+    /**
+     * @param int $limit
+     * @return array
+     */
+    public function findRollbackCounts(int $limit = 5): array
+    {
+        return $this->findCountsByStatus(Deployment::STATUS_ROLLBACK, $limit);
+    }
+
+    /**
+     * @param int $limit
+     * @return array
+     */
+    public function findFailedCounts(int $limit = 5): array
+    {
+        return $this->findCountsByStatus(Deployment::STATUS_FAILED, $limit);
+    }
+
+    /**
      * @param string $status
      * @param int $limit
      * @return array
      */
-    public function findByStatus(string $status, int $limit = 5): array
+    public function findLastByStatus(string $status, int $limit = 5): array
     {
         $qb = $this->createQueryBuilder('d')
             ->where('d.status = :status')
@@ -120,6 +147,33 @@ class DeploymentRepository extends EntityRepository implements PaginatorInterfac
         $this->addDefaultOrderBy($qb);
 
         return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @param int $limit
+     * @return array
+     */
+    public function findLastSuccessful(int $limit = 5): array
+    {
+        return $this->findLastByStatus(Deployment::STATUS_SUCCESS, $limit);
+    }
+
+    /**
+     * @param int $limit
+     * @return array
+     */
+    public function findLastRollbacks(int $limit = 5): array
+    {
+        return $this->findLastByStatus(Deployment::STATUS_ROLLBACK, $limit);
+    }
+
+    /**
+     * @param int $limit
+     * @return array
+     */
+    public function findLastFailed(int $limit = 5): array
+    {
+        return $this->findLastByStatus(Deployment::STATUS_FAILED, $limit);
     }
 
     /**
@@ -189,6 +243,109 @@ class DeploymentRepository extends EntityRepository implements PaginatorInterfac
             ->setHydrationMode(AbstractQuery::HYDRATE_ARRAY);
 
         return $this->paginate($query, $page, $this->getItemsPerPage());
+    }
+
+    /**
+     * @param int $limit
+     * @return array
+     */
+    public function getTopDeployers(int $limit = 4): array
+    {
+        return $this->createQueryBuilder('d')
+            ->select([
+                'd.deployer as name',
+                'COUNT(d.id) as deploymentCount',
+                'MAX(d.deployDate) as lastDeployDate'
+            ])
+            ->addGroupBy('d.deployer')
+            ->orderBy('deploymentCount', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getArrayResult();
+    }
+
+    /**
+     * @return array
+     */
+    public function getDeploymentStats(): array
+    {
+        return $this->createQueryBuilder('d')
+            ->select([
+                'COUNT(d.id) as total',
+                'COUNT(dd.id) as last24h',
+                'COUNT(dw.id) as lastWeek',
+                'COUNT(dm.id) as lastMonth',
+                'COUNT(dy.id) as lastYear',
+                'COUNT(d.id) / (DATE_DIFF(MAX(d.deployDate), MIN(d.deployDate))) as avgPerDay',
+                'COUNT(d.id) / (DATE_DIFF(MAX(d.deployDate), MIN(d.deployDate)) / 7) as avgPerWeek',
+                'COUNT(d.id) / (DATE_DIFF(MAX(d.deployDate), MIN(d.deployDate)) / 30) as avgPerMonth',
+                'COUNT(d.id) / (DATE_DIFF(MAX(d.deployDate), MIN(d.deployDate)) / 365) as avgPerYear',
+                'COUNT(ds.id) as successful',
+                'COUNT(dr.id) as rollbacks',
+                'COUNT(df.id) as failed',
+                'COUNT(du.id) as unknown',
+                '(COUNT(ds.id) / COUNT(d.id) * 100) as successPercentage',
+                '(COUNT(dr.id) / COUNT(d.id) * 100) as rollbackPercentage',
+                '(COUNT(df.id) / COUNT(d.id) * 100) as failedPercentage',
+                '(COUNT(du.id) / COUNT(d.id) * 100) as unknownPercentage',
+            ])
+            ->leftJoin(
+                Deployment::class,
+                'dd',
+                Join::WITH,
+                "d.id = dd.id AND dd.deployDate > :day_ago"
+            )
+            ->leftJoin(
+                Deployment::class,
+                'dw',
+                Join::WITH,
+                "d.id = dw.id AND dw.deployDate > :week_ago"
+            )
+            ->leftJoin(
+                Deployment::class,
+                'dm',
+                Join::WITH,
+                "d.id = dm.id AND dm.deployDate > :month_ago"
+            )
+            ->leftJoin(
+                Deployment::class,
+                'dy',
+                Join::WITH,
+                "d.id = dy.id AND dy.deployDate > :year_ago"
+            )
+            ->leftJoin(
+                Deployment::class,
+                'ds',
+                Join::WITH,
+                "d.id = ds.id AND ds.status = 'success'"
+            )
+            ->leftJoin(
+                Deployment::class,
+                'dr',
+                Join::WITH,
+                "d.id = dr.id AND dr.status = 'rollback'"
+            )
+            ->leftJoin(
+                Deployment::class,
+                'df',
+                Join::WITH,
+                "d.id = df.id AND df.status = 'failed'"
+            )
+            ->leftJoin(
+                Deployment::class,
+                'du',
+                Join::WITH,
+                "d.id = du.id AND (du.status != 'success' AND du.status != 'rollback' AND du.status != 'failed')"
+            )
+            ->setParameters([
+                'day_ago' => (new \DateTime('-1 day'))->format('Y-m-d H:i:s'),
+                'week_ago' => (new \DateTime('-1 week'))->format('Y-m-d H:i:s'),
+                'month_ago' => (new \DateTime('-1 month'))->format('Y-m-d H:i:s'),
+                'year_ago' => (new \DateTime('-1 year'))->format('Y-m-d H:i:s'),
+            ])
+            ->getQuery()
+            ->setHydrationMode(AbstractQuery::HYDRATE_ARRAY)
+            ->getSingleResult();
     }
 
     /**

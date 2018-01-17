@@ -22,12 +22,14 @@ class DashboardController extends Controller
     public function index(DeploymentRepository $repository): Response
     {
         return $this->render('dashboard/index.html.twig', [
-            'success' => $repository->findByStatus(Deployment::STATUS_SUCCESS),
-            'failed' => $repository->findByStatus(Deployment::STATUS_FAILED),
-            'rollback' => $repository->findByStatus(Deployment::STATUS_ROLLBACK),
-            'countsSuccess' => $repository->findCountsByStatus(Deployment::STATUS_SUCCESS),
-            'countsFailed' => $repository->findCountsByStatus(Deployment::STATUS_FAILED),
-            'countsRollback' => $repository->findCountsByStatus(Deployment::STATUS_ROLLBACK),
+            'success' => $repository->findLastSuccessful(),
+            'failed' => $repository->findLastFailed(),
+            'rollback' => $repository->findLastRollbacks(),
+            'countsSuccess' => $repository->findSuccessfulCounts(),
+            'countsFailed' => $repository->findFailedCounts(),
+            'countsRollback' => $repository->findRollbackCounts(),
+            'deploymentStats' => $repository->getDeploymentStats(),
+            'topDeployers' => $repository->getTopDeployers(),
         ]);
     }
     /**
@@ -104,7 +106,7 @@ class DashboardController extends Controller
 
         $page = $this->getPage($request);
         $filters = $deploymentRepository->getFiltersFromRequest($request);
-        $paginator = $deploymentRepository->findAllForApplication($application, $page, $filters);
+        $paginator = $deploymentRepository->findByApplication($application, $page, $filters);
 
         $this->validatePagination($request, $paginator);
 
