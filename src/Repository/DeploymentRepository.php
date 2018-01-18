@@ -10,6 +10,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\QueryBuilder;
 use DeployTracker\Entity\Application;
 use Doctrine\ORM\AbstractQuery;
+use Doctrine\Common\Collections\ArrayCollection;
 
 class DeploymentRepository extends EntityRepository implements PaginatorInterface, FilterableInterface
 {
@@ -79,11 +80,11 @@ class DeploymentRepository extends EntityRepository implements PaginatorInterfac
     /**
      * @param string $status
      * @param int $limit
-     * @return array
+     * @return ArrayCollection
      */
-    public function findCountsByStatus(string $status, int $limit = 5): array
+    public function findCountsByStatus(string $status, int $limit = 5): ArrayCollection
     {
-        return $this->createQueryBuilder('d')
+        $query = $this->createQueryBuilder('d')
             ->select([
                 'COUNT(d.application) as count',
                 'a.id as id',
@@ -101,33 +102,34 @@ class DeploymentRepository extends EntityRepository implements PaginatorInterfac
             ->groupBy('d.application')
             ->orderBy('count', 'DESC')
             ->setMaxResults($limit)
-            ->getQuery()
-            ->getResult();
+            ->getQuery();
+
+        return new ArrayCollection($query->getResult());
     }
 
     /**
      * @param int $limit
-     * @return array
+     * @return ArrayCollection
      */
-    public function findSuccessfulCounts(int $limit = 5): array
+    public function findSuccessfulCounts(int $limit = 5): ArrayCollection
     {
         return $this->findCountsByStatus(Deployment::STATUS_SUCCESS, $limit);
     }
 
     /**
      * @param int $limit
-     * @return array
+     * @return ArrayCollection
      */
-    public function findRollbackCounts(int $limit = 5): array
+    public function findRollbackCounts(int $limit = 5): ArrayCollection
     {
         return $this->findCountsByStatus(Deployment::STATUS_ROLLBACK, $limit);
     }
 
     /**
      * @param int $limit
-     * @return array
+     * @return ArrayCollection
      */
-    public function findFailedCounts(int $limit = 5): array
+    public function findFailedCounts(int $limit = 5): ArrayCollection
     {
         return $this->findCountsByStatus(Deployment::STATUS_FAILED, $limit);
     }
@@ -135,9 +137,9 @@ class DeploymentRepository extends EntityRepository implements PaginatorInterfac
     /**
      * @param string $status
      * @param int $limit
-     * @return array
+     * @return ArrayCollection
      */
-    public function findLastByStatus(string $status, int $limit = 5): array
+    public function findLastByStatus(string $status, int $limit = 5): ArrayCollection
     {
         $qb = $this->createQueryBuilder('d')
             ->where('d.status = :status')
@@ -146,32 +148,34 @@ class DeploymentRepository extends EntityRepository implements PaginatorInterfac
 
         $this->addDefaultOrderBy($qb);
 
-        return $qb->getQuery()->getResult();
+        $query = $qb->getQuery();
+
+        return new ArrayCollection($query->getResult());
     }
 
     /**
      * @param int $limit
-     * @return array
+     * @return ArrayCollection
      */
-    public function findLastSuccessful(int $limit = 5): array
+    public function findLastSuccessful(int $limit = 5): ArrayCollection
     {
         return $this->findLastByStatus(Deployment::STATUS_SUCCESS, $limit);
     }
 
     /**
      * @param int $limit
-     * @return array
+     * @return ArrayCollection
      */
-    public function findLastRollbacks(int $limit = 5): array
+    public function findLastRollbacks(int $limit = 5): ArrayCollection
     {
         return $this->findLastByStatus(Deployment::STATUS_ROLLBACK, $limit);
     }
 
     /**
      * @param int $limit
-     * @return array
+     * @return ArrayCollection
      */
-    public function findLastFailed(int $limit = 5): array
+    public function findLastFailed(int $limit = 5): ArrayCollection
     {
         return $this->findLastByStatus(Deployment::STATUS_FAILED, $limit);
     }
@@ -215,9 +219,8 @@ class DeploymentRepository extends EntityRepository implements PaginatorInterfac
                 'COUNT(DISTINCT(d.application)) as applicationCount',
                 'COUNT(DISTINCT(d.stage)) as stageCount',
                 'MAX(d.deployDate) as lastDeployDate',
-                'DATE_DIFF(MAX(d.deployDate), MIN(d.deployDate)) as trackedSinceDays',
+                'DATE_DIFF(NOW(), MIN(d.deployDate)) as trackedSinceDays',
                 'COUNT(d.id) / (DATE_DIFF(MAX(d.deployDate), MIN(d.deployDate)) / 7) as deploymentsPerWeek',
-                '(COUNT(df.id) / COUNT(d.id) * 100) as failureRate',
             ])
             ->leftJoin(
                 Deployment::class,
@@ -247,11 +250,11 @@ class DeploymentRepository extends EntityRepository implements PaginatorInterfac
 
     /**
      * @param int $limit
-     * @return array
+     * @return ArrayCollection
      */
-    public function getTopDeployers(int $limit = 4): array
+    public function getTopDeployers(int $limit = 4): ArrayCollection
     {
-        return $this->createQueryBuilder('d')
+        $query = $this->createQueryBuilder('d')
             ->select([
                 'd.deployer as name',
                 'COUNT(d.id) as deploymentCount',
@@ -260,8 +263,9 @@ class DeploymentRepository extends EntityRepository implements PaginatorInterfac
             ->addGroupBy('d.deployer')
             ->orderBy('deploymentCount', 'DESC')
             ->setMaxResults($limit)
-            ->getQuery()
-            ->getArrayResult();
+            ->getQuery();
+
+        return new ArrayCollection($query->getArrayResult());
     }
 
     /**

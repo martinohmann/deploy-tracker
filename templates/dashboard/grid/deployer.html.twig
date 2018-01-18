@@ -13,8 +13,7 @@
         <th scope="col" class="text-right">Successful</th>
         <th scope="col" class="text-right">Rollbacks</th>
         <th scope="col" class="text-right">Failed</th>
-        <th scope="col" class="text-right">Failure Rate</th>
-        <th scope="col" class="text-right">Deploy frequency</th>
+        <th scope="col" class="text-right">Avg Per Week</th>
         <th scope="col" class="text-right">Last deployment</th>
         <th scope="col" class="text-right">Tracked since</th>
       </tr>
@@ -23,39 +22,38 @@
       {% for deployer in deployers %}
         <tr>
           <th scope="row">
-            {{ deployer.name }}
+            <a class="text-dark" href="{{ path('dashboard_history', {deployer: deployer.name}) }}">
+              {{ deployer.name }}
+            </a>
           </th>
           <td class="text-right">
-            {{ deployer.applicationCount }}
+            {{ deployer.applicationCount|number_format }}
           </td>
           <td class="text-right">
-            {{ deployer.stageCount }}
+            {{ deployer.stageCount|number_format }}
           </td>
           <td class="text-right">
             <a class="text-dark" href="{{ path('dashboard_history', {deployer: deployer.name}) }}">
-              {{ deployer.deploymentCount }}
+              {{ deployer.deploymentCount|number_format }}
             </a>
           </td>
           <td class="text-right">
             <a class="text-success" href="{{ path('dashboard_history', {deployer: deployer.name, status: 'success'}) }}">
-              {{ deployer.successCount }}
+              {{ deployer.successCount|number_format }}
             </a>
           </td>
           <td class="text-right">
             <a class="text-warning" href="{{ path('dashboard_history', {deployer: deployer.name, status: 'rollback'}) }}">
-              {{ deployer.rollbackCount }}
+              {{ deployer.rollbackCount|number_format }}
             </a>
           </td>
           <td class="text-right">
             <a class="text-danger" href="{{ path('dashboard_history', {name: deployer.name, status: 'failed'}) }}">
-              {{ deployer.failedCount }}
+              {{ deployer.failedCount|number_format }}
             </a>
           </td>
           <td class="text-right">
-            {{ deployer.failureRate|number_format(2) }}%
-          </td>
-          <td class="text-right">
-            {{ deployer.deploymentsPerWeek|number_format(2) }} per week
+            {{ deployer.deploymentsPerWeek|number_format(2) }}
           </td>
           <td class="text-right">
             <span title="{{ deployer.lastDeployDate|date('Y-m-d H:i:s')}}">

@@ -78,7 +78,7 @@ class DashboardController extends Controller
     public function applications(Request $request, ApplicationRepository $repository): Response
     {
         $page = $this->getPage($request);
-        $paginator = $repository->findAll($page);
+        $paginator = $repository->getApplicationStats($page);
 
         $this->validatePagination($request, $paginator);
 
