@@ -25,3 +25,6 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Entity'
                 prefix: 'DeployTracker\Entity'
                 alias: DeployTracker
+        dql:
+            datetime_functions:
+                NOW: DoctrineExtensions\Query\Mysql\Now
