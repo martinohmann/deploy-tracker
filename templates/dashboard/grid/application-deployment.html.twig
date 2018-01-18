@@ -24,7 +24,7 @@
           </td>
           <td>
             {% if deployment.branch %}
-              <a class="badge badge-info" href="{{ deployment.branchUrl }}" target="_blank">
+              <a class="badge badge-info" href="{{ deployment.branchUrl }}" target="_blank" rel="noopener noreferrer">
                 {{ deployment.branch }}
               </a>
             {% else %}
@@ -33,7 +33,7 @@
           </td>
           <td>
             {% if deployment.commitHash %}
-              <a class="text-dark" href="{{ deployment.commitUrl }}" target="_blank" title="{{ deployment.commitHash }}">
+              <a class="text-dark" href="{{ deployment.commitUrl }}" target="_blank" rel="noopener noreferrer" title="{{ deployment.commitHash }}">
                 {{ deployment.commitHash|slice(0, 12) }}
               </a>
             {% else %}

@@ -12,7 +12,7 @@
         <span class="badge badge-success">success</span>
       </th>
       <td class="text-right">
-        {{ stats.successful }}
+        {{ stats.successful|number_format }}
       </td>
       <td class="text-right">
         {{ stats.successPercentage|number_format(2) }}%
@@ -23,7 +23,7 @@
         <span class="badge badge-warning">rollback</span>
       </th>
       <td class="text-right">
-        {{ stats.rollbacks }}
+        {{ stats.rollbacks|number_format }}
       </td>
       <td class="text-right">
         {{ stats.rollbackPercentage|number_format(2) }}%
@@ -34,7 +34,7 @@
         <span class="badge badge-danger">failed</span>
       </th>
       <td class="text-right">
-        {{ stats.failed }}
+        {{ stats.failed|number_format }}
       </td>
       <td class="text-right">
         {{ stats.failedPercentage|number_format(2) }}%
@@ -45,7 +45,7 @@
         <span class="badge badge-secondary">unknown</span>
       </th>
       <td class="text-right">
-        {{ stats.unknown }}
+        {{ stats.unknown|number_format }}
       </td>
       <td class="text-right">
         {{ stats.unknownPercentage|number_format(2) }}%

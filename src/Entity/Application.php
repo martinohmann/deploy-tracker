@@ -158,4 +158,16 @@ class Application
     {
         return $this->getDeploymentsByStatus(Deployment::STATUS_ROLLBACK);
     }
+
+    /**
+     * @return ?Deployment
+     */
+    public function getLastDeployment(): ?Deployment
+    {
+        if (false === ($deployment = $this->deployments->last())) {
+            return null;
+        }
+
+        return $deployment;
+    }
 }

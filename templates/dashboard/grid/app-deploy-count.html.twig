@@ -20,7 +20,7 @@
           </th>
           <td class="text-right">
             <a class="text-dark" href="{{ path('dashboard_application', {id: item.id, status: status}) }}">
-              {{ item.count }}
+              {{ item.count|number_format }}
             </a>
           </td>
         </tr>

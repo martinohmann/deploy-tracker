@@ -12,6 +12,7 @@
         <th scope="col" class="text-right">Successful</th>
         <th scope="col" class="text-right">Rollbacks</th>
         <th scope="col" class="text-right">Failed</th>
+        <th scope="col" class="text-right">Last deployment</th>
       </tr>
     </thead>
     <tbody>
@@ -23,7 +24,7 @@
             </a>
           </th>
           <td>
-            <a class="text-dark" href="{{ application.projectUrl }}" target="_blank">
+            <a class="text-dark" href="{{ application.projectUrl }}" target="_blank" rel="noopener noreferrer">
               {{ application.projectUrl }}
             </a>
           </td>
@@ -46,6 +47,13 @@
             <a class="text-danger" href="{{ path('dashboard_application', {id: application.id, status: 'failed'}) }}">
               {{ application.failedDeployments.count }}
             </a>
+          </td>
+          <td class="text-right">
+            {% if application.lastDeployment %}
+              {{ application.lastDeployment.deployDate|fuzzy_date }}
+            {% else %}
+              -
+            {% endif %}
           </td>
         </tr>
       {% endfor %}

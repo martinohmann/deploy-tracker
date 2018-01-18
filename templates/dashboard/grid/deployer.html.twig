@@ -13,10 +13,10 @@
         <th scope="col" class="text-right">Successful</th>
         <th scope="col" class="text-right">Rollbacks</th>
         <th scope="col" class="text-right">Failed</th>
-        <th scope="col" class="text-center">Failure Rate</th>
-        <th scope="col" class="text-center">Deploy frequency</th>
-        <th scope="col">Last deployment</th>
-        <th scope="col">Tracked since</th>
+        <th scope="col" class="text-right">Failure Rate</th>
+        <th scope="col" class="text-right">Deploy frequency</th>
+        <th scope="col" class="text-right">Last deployment</th>
+        <th scope="col" class="text-right">Tracked since</th>
       </tr>
     </thead>
     <tbody>
@@ -51,18 +51,18 @@
               {{ deployer.failedCount }}
             </a>
           </td>
-          <td class="text-center">
+          <td class="text-right">
             {{ deployer.failureRate|number_format(2) }}%
           </td>
-          <td class="text-center">
-            <strong>{{ deployer.deploymentsPerWeek|number_format(2) }}</strong> per week
+          <td class="text-right">
+            {{ deployer.deploymentsPerWeek|number_format(2) }} per week
           </td>
-          <td>
+          <td class="text-right">
             <span title="{{ deployer.lastDeployDate|date('Y-m-d H:i:s')}}">
               {{ date(deployer.lastDeployDate)|fuzzy_date }}
             </span>
           </td>
-          <td>
+          <td class="text-right">
             {{ deployer.trackedSinceDays }} day{% if deployer.trackedSinceDays > 1 or deployer.trackedSinceDays == 0 %}s{% endif %}
           </td>
         </tr>

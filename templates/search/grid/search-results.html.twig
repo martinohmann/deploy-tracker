@@ -30,7 +30,7 @@
           </td>
           <td>
             {% if result.branch %}
-              <a class="badge badge-info" href="{{ result.branchUrl }}" target="_blank">
+              <a class="badge badge-info" href="{{ result.branchUrl }}" target="_blank" rel="noopener noreferrer">
                 {{ result.branch|highlight(searchQuery) }}
               </a>
             {% else %}
@@ -39,7 +39,7 @@
           </td>
           <td>
             {% if result.commitUrl %}
-              <a class="text-dark" href="{{ result.commitUrl }}" target="_blank" title="{{ result.commitHash }}">
+              <a class="text-dark" href="{{ result.commitUrl }}" target="_blank" rel="noopener noreferrer" title="{{ result.commitHash }}">
                 {{ result.commitHash|slice(0, 12)|highlight(searchQuery) }}
               </a>
             {% else %}

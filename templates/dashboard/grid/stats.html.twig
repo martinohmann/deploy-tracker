@@ -8,7 +8,7 @@
       <tr>
         <th scope="col">Application</th>
         <th scope="col">Stage</th>
-        <th scope="col">Time</th>
+        <th scope="col" class="text-right">Time</th>
       </tr>
     </thead>
     <tbody>
@@ -24,7 +24,7 @@
               {{ deployment.stage }}
             </a>
           </td>
-          <td>
+          <td class="text-right">
             <span title="{{ deployment.deployDate|date('Y-m-d H:i:s')}}">
               {{ deployment.deployDate|fuzzy_date }}
             </span>

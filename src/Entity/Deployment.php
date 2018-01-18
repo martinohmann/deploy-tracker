@@ -61,7 +61,7 @@ class Deployment
     private $deployDate;
 
     /**
-     * @ORM\ManyToOne(targetEntity="DeployTracker\Entity\Application", inversedBy="deployments")
+     * @ORM\ManyToOne(targetEntity="DeployTracker\Entity\Application", inversedBy="deployments", fetch="EAGER")
      * @ORM\JoinColumn(name="application_id", referencedColumnName="id")
      *
      * @var Application
