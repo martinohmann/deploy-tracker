@@ -22,16 +22,14 @@ class DashboardController extends Controller
     public function index(DeploymentRepository $repository): Response
     {
         return $this->render('dashboard/index.html.twig', [
-            'success' => $repository->findLastSuccessful(),
-            'failed' => $repository->findLastFailed(),
-            'rollback' => $repository->findLastRollbacks(),
-            'countsSuccess' => $repository->findSuccessfulCounts(),
-            'countsFailed' => $repository->findFailedCounts(),
-            'countsRollback' => $repository->findRollbackCounts(),
-            'deploymentStats' => $repository->getDeploymentStats(),
-            'topDeployers' => $repository->getTopDeployers(),
+            'success' => $repository->findLastByStatus(Deployment::STATUS_SUCCESS),
+            'failed' => $repository->findLastByStatus(Deployment::STATUS_FAILED),
+            'rollback' => $repository->findLastByStatus(Deployment::STATUS_ROLLBACK),
+            'stats' => $repository->aggregateDeploymentStats(),
+            'topDeployers' => $repository->findTopDeployers(),
         ]);
     }
+
     /**
      * @param Request $request
      * @param DeploymentRepository $repository
@@ -122,13 +120,13 @@ class DashboardController extends Controller
      * @param DeploymentRepository $repository
      * @return Response
      */
-    public function deployerStats(Request $request, DeploymentRepository $repository): Response
+    public function deployers(Request $request, DeploymentRepository $repository): Response
     {
         $page = $this->getPage($request);
-        $paginator = $repository->getDeployerStats($page);
+        $paginator = $repository->findDeployers($page);
 
         $this->validatePagination($request, $paginator);
 
-        return $this->render('dashboard/deployer-stats.html.twig', ['paginator' => $paginator]);
+        return $this->render('dashboard/deployers.html.twig', ['paginator' => $paginator]);
     }
 }

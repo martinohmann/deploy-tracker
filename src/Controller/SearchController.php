@@ -18,7 +18,7 @@ class SearchController extends Controller
      */
     public function index(Request $request, DeploymentRepository $repository): Response
     {
-        $searchQuery = $request->query->get('q', '');
+        $searchQuery = trim($request->query->get('q', ''));
 
         if (!$searchQuery) {
             throw new NotFoundHttpException();

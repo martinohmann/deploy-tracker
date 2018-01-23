@@ -9,24 +9,13 @@
   <tbody>
     <tr>
       <th scope="row">
-        Daily
+        Annually
       </th>
       <td class="text-right">
-        {{ stats.avgPerDay|number_format(2) }}
+        {{ stats.avgPerYear|number_format(2) }}
       </td>
       <td class="text-right">
-        {{ stats.last24h|number_format }}
-      </td>
-    </tr>
-    <tr>
-      <th scope="row">
-        Weekly
-      </th>
-      <td class="text-right">
-        {{ stats.avgPerWeek|number_format(2) }}
-      </td>
-      <td class="text-right">
-        {{ stats.lastWeek|number_format }}
+        {{ stats.lastYear|number_format }}
       </td>
     </tr>
     <tr>
@@ -42,13 +31,24 @@
     </tr>
     <tr>
       <th scope="row">
-        Annually
+        Weekly
       </th>
       <td class="text-right">
-        {{ stats.avgPerYear|number_format(2) }}
+        {{ stats.avgPerWeek|number_format(2) }}
       </td>
       <td class="text-right">
-        {{ stats.lastYear|number_format }}
+        {{ stats.lastWeek|number_format }}
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        Daily
+      </th>
+      <td class="text-right">
+        {{ stats.avgPerDay|number_format(2) }}
+      </td>
+      <td class="text-right">
+        {{ stats.last24h|number_format }}
       </td>
     </tr>
   </tbody>

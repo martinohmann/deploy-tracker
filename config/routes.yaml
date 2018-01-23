@@ -22,9 +22,9 @@ dashboard_application:
     requirements:
         id: \d+
 
-dashboard_deployer_stats:
-    path: /deployer-stats
-    controller: DeployTracker\Controller\DashboardController::deployerStats
+dashboard_deployers:
+    path: /deployers
+    controller: DeployTracker\Controller\DashboardController::deployers
 
 # DeployTracker\SearchController routes
 search_index:

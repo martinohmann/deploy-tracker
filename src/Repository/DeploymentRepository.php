@@ -82,63 +82,6 @@ class DeploymentRepository extends EntityRepository implements PaginatorInterfac
      * @param int $limit
      * @return ArrayCollection
      */
-    public function findCountsByStatus(string $status, int $limit = 5): ArrayCollection
-    {
-        $query = $this->createQueryBuilder('d')
-            ->select([
-                'COUNT(d.application) as count',
-                'a.id as id',
-                'a.name as name',
-                'a.projectUrl as projectUrl',
-            ])
-            ->join(
-                'd.application',
-                'a',
-                Join::WITH,
-                "d.application = a.id"
-            )
-            ->where('d.status = :status')
-            ->setParameter('status', $status)
-            ->groupBy('d.application')
-            ->orderBy('count', 'DESC')
-            ->setMaxResults($limit)
-            ->getQuery();
-
-        return new ArrayCollection($query->getResult());
-    }
-
-    /**
-     * @param int $limit
-     * @return ArrayCollection
-     */
-    public function findSuccessfulCounts(int $limit = 5): ArrayCollection
-    {
-        return $this->findCountsByStatus(Deployment::STATUS_SUCCESS, $limit);
-    }
-
-    /**
-     * @param int $limit
-     * @return ArrayCollection
-     */
-    public function findRollbackCounts(int $limit = 5): ArrayCollection
-    {
-        return $this->findCountsByStatus(Deployment::STATUS_ROLLBACK, $limit);
-    }
-
-    /**
-     * @param int $limit
-     * @return ArrayCollection
-     */
-    public function findFailedCounts(int $limit = 5): ArrayCollection
-    {
-        return $this->findCountsByStatus(Deployment::STATUS_FAILED, $limit);
-    }
-
-    /**
-     * @param string $status
-     * @param int $limit
-     * @return ArrayCollection
-     */
     public function findLastByStatus(string $status, int $limit = 5): ArrayCollection
     {
         $qb = $this->createQueryBuilder('d')
@@ -151,33 +94,6 @@ class DeploymentRepository extends EntityRepository implements PaginatorInterfac
         $query = $qb->getQuery();
 
         return new ArrayCollection($query->getResult());
-    }
-
-    /**
-     * @param int $limit
-     * @return ArrayCollection
-     */
-    public function findLastSuccessful(int $limit = 5): ArrayCollection
-    {
-        return $this->findLastByStatus(Deployment::STATUS_SUCCESS, $limit);
-    }
-
-    /**
-     * @param int $limit
-     * @return ArrayCollection
-     */
-    public function findLastRollbacks(int $limit = 5): ArrayCollection
-    {
-        return $this->findLastByStatus(Deployment::STATUS_ROLLBACK, $limit);
-    }
-
-    /**
-     * @param int $limit
-     * @return ArrayCollection
-     */
-    public function findLastFailed(int $limit = 5): ArrayCollection
-    {
-        return $this->findLastByStatus(Deployment::STATUS_FAILED, $limit);
     }
 
     /**
@@ -207,7 +123,7 @@ class DeploymentRepository extends EntityRepository implements PaginatorInterfac
      * @param int $page
      * @return Paginator
      */
-    public function getDeployerStats(int $page = 1): Paginator
+    public function findDeployers(int $page = 1): Paginator
     {
         $query = $this->createQueryBuilder('d')
             ->select([
@@ -252,7 +168,7 @@ class DeploymentRepository extends EntityRepository implements PaginatorInterfac
      * @param int $limit
      * @return ArrayCollection
      */
-    public function getTopDeployers(int $limit = 4): ArrayCollection
+    public function findTopDeployers(int $limit = 4): ArrayCollection
     {
         $query = $this->createQueryBuilder('d')
             ->select([
@@ -271,7 +187,7 @@ class DeploymentRepository extends EntityRepository implements PaginatorInterfac
     /**
      * @return array
      */
-    public function getDeploymentStats(): array
+    public function aggregateDeploymentStats(): array
     {
         return $this->createQueryBuilder('d')
             ->select([
