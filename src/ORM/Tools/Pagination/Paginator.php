@@ -19,6 +19,11 @@ class Paginator extends BasePaginator
     private $limit;
 
     /**
+     * @var \Iterator
+     */
+    private $iterator;
+
+    /**
      * @param Query $query
      * @param int $page
      * @param int $limit
@@ -33,6 +38,18 @@ class Paginator extends BasePaginator
             ->setMaxResults($limit);
 
         parent::__construct($query, $fetchJoinCollection);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getIterator()
+    {
+        if (null === $this->iterator) {
+            $this->iterator = parent::getIterator();
+        }
+
+        return $this->iterator;
     }
 
     /**
