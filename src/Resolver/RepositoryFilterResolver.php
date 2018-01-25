@@ -1,20 +1,22 @@
 <?php
 
-namespace DeployTracker\Repository;
+namespace DeployTracker\Resolver;
 
+use DeployTracker\Repository\FilterableInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-trait FilterableTrait
+class RepositoryFilterResolver
 {
     /**
+     * @param FilterableInterface $repository
      * @param Request $request
      * @return array
      */
-    public function getFiltersFromRequest(Request $request): array
+    public function resolve(FilterableInterface $repository, Request $request): array
     {
         $filters = [];
 
-        foreach ($this->getAvailableFilters() as $filter) {
+        foreach ($repository->getAvailableFilters() as $filter) {
             if ($request->query->has($filter)) {
                 $filters[$filter] = $request->query->get($filter);
             }
@@ -22,9 +24,4 @@ trait FilterableTrait
 
         return $filters;
     }
-
-    /**
-     * @return array
-     */
-    public abstract function getAvailableFilters(): array;
 }

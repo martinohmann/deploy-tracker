@@ -9,7 +9,7 @@ use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\AbstractQuery;
 use DeployTracker\Entity\Deployment;
 
-class ApplicationRepository extends EntityRepository implements PaginatorInterface
+class ApplicationRepository extends EntityRepository
 {
     use PaginatorTrait;
 
@@ -19,7 +19,7 @@ class ApplicationRepository extends EntityRepository implements PaginatorInterfa
      * @param int $page
      * @return Paginator
      */
-    public function getApplicationStats(int $page = 1): Paginator
+    public function findAll(int $page = 1): Paginator
     {
         $query = $this->createQueryBuilder('a')
             ->select([
@@ -92,7 +92,7 @@ class ApplicationRepository extends EntityRepository implements PaginatorInterfa
     }
 
     /**
-     * {@inheritdoc}
+     * @return int
      */
     public function getItemsPerPage(): int
     {

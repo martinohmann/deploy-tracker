@@ -2,19 +2,16 @@
 
 namespace DeployTracker\Controller;
 
+use DeployTracker\Entity\Deployment;
+use DeployTracker\Manager\ApplicationManager;
+use DeployTracker\Manager\DeploymentManager;
+use DeployTracker\Repository\ApplicationRepository;
+use DeployTracker\Repository\DeploymentRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
-use DeployTracker\Repository\DeploymentRepository;
-use DeployTracker\Repository\ApplicationRepository;
-use DeployTracker\Entity\Deployment;
-use DeployTracker\Controller\PageAwareTrait;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class DashboardController extends Controller
 {
-    use PageAwareTrait;
-
     /**
      * @param DeploymentRepository $repository
      * @return Response
@@ -31,87 +28,62 @@ class DashboardController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @param DeploymentRepository $repository
+     * @param DeploymentManager $manager
      * @return Response
      */
-    public function recent(Request $request, DeploymentRepository $repository): Response
+    public function recent(DeploymentManager $manager): Response
     {
-        $page = $this->getPage($request);
-        $filters = $repository->getFiltersFromRequest($request);
-        $paginator = $repository->findMostRecent($page, $filters);
-
-        $this->validatePagination($paginator);
+        $result = $manager->findMostRecent();
 
         return $this->render('dashboard/recent.html.twig', [
-            'paginator' => $paginator,
-            'filters' => $filters,
+            'paginator' => $result->getPaginator(),
+            'filters' => $result->getFilters(),
         ]);
     }
 
     /**
-     * @param Request $request
-     * @param DeploymentRepository $repository
+     * @param DeploymentManager $manager
      * @return Response
      */
-    public function history(Request $request, DeploymentRepository $repository): Response
+    public function history(DeploymentManager $manager): Response
     {
-        $page = $this->getPage($request);
-        $filters = $repository->getFiltersFromRequest($request);
-        $paginator = $repository->findAll($page, $filters);
-
-        $this->validatePagination($paginator);
+        $result = $manager->findAll();
 
         return $this->render('dashboard/history.html.twig', [
-            'paginator' => $paginator,
-            'filters' => $filters,
+            'paginator' => $result->getPaginator(),
+            'filters' => $result->getFilters(),
         ]);
     }
 
     /**
-     * @param Request $request
-     * @param ApplicationRepository $repository
+     * @param ApplicationManager $manager
      * @return Response
      */
-    public function applications(Request $request, ApplicationRepository $repository): Response
+    public function applications(ApplicationManager $manager): Response
     {
-        $page = $this->getPage($request);
-        $paginator = $repository->getApplicationStats($page);
-
-        $this->validatePagination($paginator);
-
-        return $this->render('dashboard/applications.html.twig', ['paginator' => $paginator]);
+        return $this->render('dashboard/applications.html.twig', [
+            'paginator' => $manager->findAll()->getPaginator(),
+        ]);
     }
 
     /**
-     * @param Request $request
      * @param int $id
-     * @param ApplicationRepository $applicationRepository
-     * @param DeploymentRepository $deploymentRepository
+     * @param ApplicationRepository $repository
+     * @param DeploymentManager $manager
      * @return Response
      */
-    public function application(
-        Request $request,
-        int $id,
-        ApplicationRepository $applicationRepository,
-        DeploymentRepository $deploymentRepository
-    ): Response {
-        $application = $applicationRepository->findOneById($id);
-
-        if (null === $application) {
+    public function application(int $id, ApplicationRepository $repository, DeploymentManager $manager): Response
+    {
+        if (null === ($application = $repository->findOneById($id))) {
             throw new NotFoundHttpException();
         }
 
-        $page = $this->getPage($request);
-        $filters = $deploymentRepository->getFiltersFromRequest($request);
-        $paginator = $deploymentRepository->findByApplication($application, $page, $filters);
-
-        $this->validatePagination($paginator);
+        $result = $manager->findByApplication($application);
 
         return $this->render('dashboard/application.html.twig', [
             'application' => $application,
-            'paginator' => $paginator,
-            'filters' => $filters,
+            'paginator' => $result->getPaginator(),
+            'filters' => $result->getFilters(),
         ]);
     }
 
@@ -120,13 +92,10 @@ class DashboardController extends Controller
      * @param DeploymentRepository $repository
      * @return Response
      */
-    public function deployers(Request $request, DeploymentRepository $repository): Response
+    public function deployers(DeploymentManager $manager): Response
     {
-        $page = $this->getPage($request);
-        $paginator = $repository->findDeployers($page);
-
-        $this->validatePagination($paginator);
-
-        return $this->render('dashboard/deployers.html.twig', ['paginator' => $paginator]);
+        return $this->render('dashboard/deployers.html.twig', [
+            'paginator' => $manager->findDeployers()->getPaginator(),
+        ]);
     }
 }

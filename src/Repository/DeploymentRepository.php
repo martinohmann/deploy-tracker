@@ -12,10 +12,9 @@ use DeployTracker\Entity\Application;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\Common\Collections\ArrayCollection;
 
-class DeploymentRepository extends EntityRepository implements PaginatorInterface, FilterableInterface
+class DeploymentRepository extends EntityRepository implements FilterableInterface
 {
     use PaginatorTrait;
-    use FilterableTrait;
 
     const ITEMS_PER_PAGE = 50;
     const AVAILABLE_FILTERS = ['deployer', 'stage', 'status'];
@@ -311,7 +310,7 @@ class DeploymentRepository extends EntityRepository implements PaginatorInterfac
     }
 
     /**
-     * {@inheritdoc}
+     * @return int
      */
     public function getItemsPerPage(): int
     {

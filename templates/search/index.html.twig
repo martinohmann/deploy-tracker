@@ -93,6 +93,6 @@
         {% endfor %}
       </tbody>
     </table>
-    {% include 'fragment/pagination.html.twig' %}
+    {% include 'fragment/pagination.html.twig' with {filters: filters|merge({q: searchQuery})} %}
   {% endif %}
 {% endblock %}
