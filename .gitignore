@@ -14,3 +14,4 @@
 /phpunit.xml
 ###< phpunit/phpunit ###
 /.padawan/
+phpactor.log

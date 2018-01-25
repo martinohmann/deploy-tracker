@@ -28,7 +28,7 @@ class SearchController extends Controller
         $filters = $repository->getFiltersFromRequest($request);
         $paginator = $repository->search($searchQuery, $page, $filters);
 
-        $this->validatePagination($request, $paginator);
+        $this->validatePagination($paginator);
 
         return $this->render('search/index.html.twig', [
             'paginator' => $paginator,

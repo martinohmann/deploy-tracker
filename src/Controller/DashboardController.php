@@ -41,7 +41,7 @@ class DashboardController extends Controller
         $filters = $repository->getFiltersFromRequest($request);
         $paginator = $repository->findMostRecent($page, $filters);
 
-        $this->validatePagination($request, $paginator);
+        $this->validatePagination($paginator);
 
         return $this->render('dashboard/recent.html.twig', [
             'paginator' => $paginator,
@@ -60,7 +60,7 @@ class DashboardController extends Controller
         $filters = $repository->getFiltersFromRequest($request);
         $paginator = $repository->findAll($page, $filters);
 
-        $this->validatePagination($request, $paginator);
+        $this->validatePagination($paginator);
 
         return $this->render('dashboard/history.html.twig', [
             'paginator' => $paginator,
@@ -78,7 +78,7 @@ class DashboardController extends Controller
         $page = $this->getPage($request);
         $paginator = $repository->getApplicationStats($page);
 
-        $this->validatePagination($request, $paginator);
+        $this->validatePagination($paginator);
 
         return $this->render('dashboard/applications.html.twig', ['paginator' => $paginator]);
     }
@@ -106,7 +106,7 @@ class DashboardController extends Controller
         $filters = $deploymentRepository->getFiltersFromRequest($request);
         $paginator = $deploymentRepository->findByApplication($application, $page, $filters);
 
-        $this->validatePagination($request, $paginator);
+        $this->validatePagination($paginator);
 
         return $this->render('dashboard/application.html.twig', [
             'application' => $application,
@@ -125,7 +125,7 @@ class DashboardController extends Controller
         $page = $this->getPage($request);
         $paginator = $repository->findDeployers($page);
 
-        $this->validatePagination($request, $paginator);
+        $this->validatePagination($paginator);
 
         return $this->render('dashboard/deployers.html.twig', ['paginator' => $paginator]);
     }

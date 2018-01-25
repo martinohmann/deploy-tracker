@@ -2,7 +2,7 @@
 
 namespace DeployTracker\Controller;
 
-use DeployTracker\Exception\RedirectToRouteException;
+use DeployTracker\Exception\RequestedPageOutOfBoundsException;
 use DeployTracker\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -20,21 +20,16 @@ trait PageAwareTrait
     }
 
     /**
-     * @param Request $request
      * @param Paginator $paginator
      * @return void
      */
-    protected function validatePagination(Request $request, Paginator $paginator)
+    protected function validatePagination(Paginator $paginator)
     {
         $page = $paginator->getPage();
         $maxPage = $paginator->getMaxPage();
 
         if ($maxPage > 0 && $page > $maxPage) {
-            $route = (string) $request->attributes->get('_route');
-            $routeParams = (array) $request->attributes->get('_route_params');
-            $parameters = array_merge($routeParams, ['page' => $maxPage]);
-
-            throw new RedirectToRouteException($route, $parameters);
+            throw new RequestedPageOutOfBoundsException($page, $maxPage);
         }
     }
 }

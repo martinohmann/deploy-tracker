@@ -6,10 +6,11 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
-use DeployTracker\Exception\RedirectToRouteException;
+use DeployTracker\Exception\RequestedPageOutOfBoundsException;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 
-class RedirectToRouteSubscriber implements EventSubscriberInterface
+class RequestedPageOutOfBoundsSubscriber implements EventSubscriberInterface
 {
     /**
      * @var UrlGeneratorInterface
@@ -32,17 +33,11 @@ class RedirectToRouteSubscriber implements EventSubscriberInterface
     {
         $exception = $event->getException();
 
-        if (!$exception instanceof RedirectToRouteException) {
-            return;
+        if ($exception instanceof RequestedPageOutOfBoundsException) {
+            $url = $this->generateRedirectUrl($event->getRequest(), $exception);
+
+            $event->setResponse(new RedirectResponse($url));
         }
-
-        $url = $this->urlGenerator->generate(
-            $exception->getRouteName(),
-            $exception->getParameters(),
-            $exception->getReferenceType()
-        );
-
-        $event->setResponse(new RedirectResponse($url));
     }
 
     /**
@@ -53,5 +48,19 @@ class RedirectToRouteSubscriber implements EventSubscriberInterface
         return [
             KernelEvents::EXCEPTION => 'onKernelException',
         ];
+    }
+
+    /**
+     * @param Request $request
+     * @param RequestedPageOutOfBoundsException $exception
+     * @return string
+     */
+    private function generateRedirectUrl(Request $request, RequestedPageOutOfBoundsException $exception): string
+    {
+        $route = (string) $request->attributes->get('_route');
+        $routeParams = (array) $request->attributes->get('_route_params');
+        $parameters = array_merge($routeParams, ['page' => $exception->getMaxPage()]);
+
+        return $this->urlGenerator->generate($route, $parameters);
     }
 }

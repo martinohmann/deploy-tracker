@@ -3,7 +3,7 @@
 namespace DeployTracker\Tests\Controller;
 
 use DeployTracker\Controller\PageAwareTrait;
-use DeployTracker\Exception\RedirectToRouteException;
+use DeployTracker\Exception\RequestedPageOutOfBoundsException;
 use DeployTracker\ORM\Tools\Pagination\Paginator;
 use DeployTracker\Tests\TestUtil;
 use PHPUnit\Framework\TestCase;
@@ -37,15 +37,14 @@ class PageAwareTraitTest extends TestCase
     public function shouldThrowExceptionWhenPageIsOutOfBounds()
     {
         $paginator = Phake::mock(Paginator::class);
-        $request = new Request();
 
         Phake::when($paginator)->getPage->thenReturn(10);
         Phake::when($paginator)->getMaxPage->thenReturn(2);
 
         $trait = $this->getMockForTrait(PageAwareTrait::class);
 
-        $this->expectException(RedirectToRouteException::class);
-        TestUtil::callMethod($trait, 'validatePagination', [$request, $paginator]);
+        $this->expectException(RequestedPageOutOfBoundsException::class);
+        TestUtil::callMethod($trait, 'validatePagination', [$paginator]);
     }
 
     /**
@@ -54,14 +53,13 @@ class PageAwareTraitTest extends TestCase
     public function shouldDoNothingIfPageIsWithinBounds()
     {
         $paginator = Phake::mock(Paginator::class);
-        $request = new Request();
 
         Phake::when($paginator)->getPage->thenReturn(2);
         Phake::when($paginator)->getMaxPage->thenReturn(10);
 
         $trait = $this->getMockForTrait(PageAwareTrait::class);
 
-        self::assertNull(TestUtil::callMethod($trait, 'validatePagination', [$request, $paginator]));
+        self::assertNull(TestUtil::callMethod($trait, 'validatePagination', [$paginator]));
     }
 
     /**
