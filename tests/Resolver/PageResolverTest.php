@@ -28,10 +28,10 @@ class PageResolverTest extends TestCase
      */
     public function shouldFallbackToDefaultPageIfNotPresentInQueryString()
     {
-        $resolver = new PageResolver('page', 42);
+        $resolver = new PageResolver('page');
         $page = $resolver->resolve(new Request());
 
-        $this->assertSame(42, $page);
+        $this->assertSame(1, $page);
     }
 
     /**
