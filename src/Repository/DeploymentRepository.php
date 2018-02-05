@@ -184,6 +184,78 @@ class DeploymentRepository extends EntityRepository implements FilterableInterfa
     }
 
     /**
+     * @param \DatePeriod $period
+     * @return ArrayCollection
+     */
+    public function getMonthlyCountsInPeriod(\DatePeriod $period): ArrayCollection
+    {
+        $query = $this->createQueryBuilder('d')
+            ->select([
+                'a.name as label',
+                'COUNT(d) as count',
+                'YEAR(d.deployDate) as year',
+                'MONTH(d.deployDate) as month',
+                "DATE_FORMAT(d.deployDate, '%Y-%m') as date",
+            ])
+            ->where('d.deployDate >= :start_date AND d.deployDate < :end_date')
+            ->leftJoin(
+                Application::class,
+                'a',
+                Join::WITH,
+                'd.application = a.id'
+            )
+            ->setParameters([
+                'start_date' => $period->getStartDate(),
+                'end_date' => $period->getEndDate(),
+            ])
+            ->groupBy('year')
+            ->addGroupBy('month')
+            ->addGroupBy('a.name')
+            ->addOrderBy('d.deployDate', 'ASC')
+            ->getQuery()
+            ->setHydrationMode(AbstractQuery::HYDRATE_ARRAY);
+
+        return new ArrayCollection($query->getArrayResult());
+    }
+
+    /**
+     * @param \DatePeriod $period
+     * @return ArrayCollection
+     */
+    public function getDailyCountsInPeriod(\DatePeriod $period): ArrayCollection
+    {
+        $query = $this->createQueryBuilder('d')
+            ->select([
+                'a.name as label',
+                'COUNT(d) as count',
+                'YEAR(d.deployDate) as year',
+                'MONTH(d.deployDate) as month',
+                'DAY(d.deployDate) as day',
+                "DATE_FORMAT(d.deployDate, '%Y-%m-%d') as date",
+            ])
+            ->where('d.deployDate >= :start_date AND d.deployDate < :end_date')
+            ->leftJoin(
+                Application::class,
+                'a',
+                Join::WITH,
+                'd.application = a.id'
+            )
+            ->setParameters([
+                'start_date' => $period->getStartDate(),
+                'end_date' => $period->getEndDate(),
+            ])
+            ->groupBy('year')
+            ->addGroupBy('month')
+            ->addGroupBy('day')
+            ->addGroupBy('a.name')
+            ->addOrderBy('d.deployDate', 'ASC')
+            ->getQuery()
+            ->setHydrationMode(AbstractQuery::HYDRATE_ARRAY);
+
+        return new ArrayCollection($query->getArrayResult());
+    }
+
+    /**
      * @return array
      */
     public function aggregateDeploymentStats(): array

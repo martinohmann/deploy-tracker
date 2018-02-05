@@ -27,4 +27,8 @@ doctrine:
                 alias: DeployTracker
         dql:
             datetime_functions:
+                DATE_FORMAT: DoctrineExtensions\Query\Mysql\DateFormat
+                DAY: DoctrineExtensions\Query\Mysql\Day
+                MONTH: DoctrineExtensions\Query\Mysql\Month
                 NOW: DoctrineExtensions\Query\Mysql\Now
+                YEAR: DoctrineExtensions\Query\Mysql\Year

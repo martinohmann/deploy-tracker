@@ -3,20 +3,23 @@
 namespace DeployTracker\Controller;
 
 use DeployTracker\Entity\Deployment;
+use DeployTracker\Histogram\DateHistogramFactory;
 use DeployTracker\Manager\ApplicationManager;
 use DeployTracker\Manager\DeploymentManager;
 use DeployTracker\Repository\ApplicationRepository;
 use DeployTracker\Repository\DeploymentRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class DashboardController extends Controller
 {
     /**
      * @param DeploymentRepository $repository
+     * @param DateHistogramFactory $factory
      * @return Response
      */
-    public function index(DeploymentRepository $repository): Response
+    public function index(DeploymentRepository $repository, DateHistogramFactory $factory): Response
     {
         return $this->render('dashboard/index.html.twig', [
             'success' => $repository->findLastByStatus(Deployment::STATUS_SUCCESS),
@@ -24,6 +27,16 @@ class DashboardController extends Controller
             'rollback' => $repository->findLastByStatus(Deployment::STATUS_ROLLBACK),
             'stats' => $repository->aggregateDeploymentStats(),
             'topDeployers' => $repository->findTopDeployers(),
+            'lastYearHistogram' => $factory->createMonthlyDeploymentHistogram(
+                $repository,
+                new \DateTime('-1 year'),
+                new \DateTime()
+            ),
+            'lastWeekHistogram' => $factory->createDailyDeploymentHistogram(
+                $repository,
+                new \DateTime('-1 week'),
+                new \DateTime()
+            ),
         ]);
     }
 
