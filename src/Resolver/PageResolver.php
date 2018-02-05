@@ -12,18 +12,11 @@ class PageResolver
     private $paramName;
 
     /**
-     * @var int
-     */
-    private $defaultPage;
-
-    /**
      * @param string $paramName
-     * @param int $defaultPage
      */
-    public function __construct(string $paramName = 'page', int $defaultPage = 1)
+    public function __construct(string $paramName = 'page')
     {
         $this->paramName = $paramName;
-        $this->defaultPage = $defaultPage;
     }
 
     /**
@@ -32,7 +25,7 @@ class PageResolver
      */
     public function resolve(Request $request): int
     {
-        $page = (int) $request->query->get($this->paramName, $this->defaultPage);
+        $page = (int) $request->query->get($this->paramName, 1);
 
         return $page < 1 ? 1 : $page;
     }
