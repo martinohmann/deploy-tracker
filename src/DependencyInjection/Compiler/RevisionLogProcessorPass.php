@@ -2,21 +2,21 @@
 
 namespace DeployTracker\DependencyInjection\Compiler;
 
+use DeployTracker\Processor\RevisionLogProcessorFactory;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use DeployTracker\Importer\RevisionLogImporterFactory;
 use Symfony\Component\DependencyInjection\Reference;
 
-class RevisionLogImporterPass implements CompilerPassInterface
+class RevisionLogProcessorPass implements CompilerPassInterface
 {
-    const TAG_NAME = 'deploy_tracker.revision_log_importer';
+    const TAG_NAME = 'deploy_tracker.revision_log_processor';
 
     /**
      * {@inheritdoc}
      */
     public function process(ContainerBuilder $container)
     {
-        $factory = $container->findDefinition(RevisionLogImporterFactory::class);
+        $factory = $container->findDefinition(RevisionLogProcessorFactory::class);
 
         $taggedServices = $container->findTaggedServiceIds(self::TAG_NAME);
 
@@ -31,7 +31,7 @@ class RevisionLogImporterPass implements CompilerPassInterface
                 }
 
                 $factory->addMethodCall(
-                    'addImporter',
+                    'addProcessor',
                     [$tag['type'], new Reference($id)]
                 );
             }

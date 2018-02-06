@@ -3,14 +3,13 @@
 namespace DeployTracker\Importer;
 
 use DeployTracker\Entity\Application;
+use DeployTracker\Entity\RevisionLog;
 
 interface RevisionLogImporterInterface
 {
     /**
-     * @param string $filename
-     * @param Application $application
-     * @param string $stage
+     * @param RevisionLog $revisionLog
      * @return void
      */
-    public function import(string $filename, Application $application, string $stage);
+    public function import(RevisionLog $revisionLog);
 }

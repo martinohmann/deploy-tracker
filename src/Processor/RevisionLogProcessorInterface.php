@@ -2,13 +2,13 @@
 
 namespace DeployTracker\Processor;
 
-use Doctrine\Common\Collections\ArrayCollection;
+use DeployTracker\Entity\RevisionLog;
 
 interface RevisionLogProcessorInterface
 {
     /**
-     * @param string $filename
-     * @return ArrayCollection
+     * @param RevisionLog $revisionLog
+     * @return void
      */
-    public function process(string $filename): ArrayCollection;
+    public function process(RevisionLog $revisionLog);
 }

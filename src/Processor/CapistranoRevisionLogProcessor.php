@@ -4,9 +4,9 @@ namespace DeployTracker\Processor;
 
 use DeployTracker\Entity\Application;
 use DeployTracker\Entity\Deployment;
+use DeployTracker\Entity\RevisionLog;
 use DeployTracker\Exception\RevisionLogParseException;
-use DeployTracker\Parser\RevisionLogParserInterface;
-use Doctrine\Common\Collections\ArrayCollection;
+use DeployTracker\Parser\CapistranoRevisionLogParser;
 use Psr\Log\NullLogger;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LoggerAwareTrait;
@@ -16,49 +16,25 @@ class CapistranoRevisionLogProcessor implements RevisionLogProcessorInterface
     use LoggerAwareTrait;
 
     /**
-     * @var RevisionLogParserInterface
-     */
-    private $parser;
-
-    /**
-     * @var Application
-     */
-    private $application;
-
-    /**
-     * @var string
-     */
-    private $stage;
-
-    /**
-     * @param RevisionLogParserInterface $parser
-     * @param Application $application
-     * @param string $stage
      * @param LoggerInterface $logger
      */
-    public function __construct(
-        RevisionLogParserInterface $parser,
-        Application $application,
-        string $stage,
-        LoggerInterface $logger = null
-    ) {
-        $this->parser = $parser;
-        $this->application = $application;
-        $this->stage = $stage;
+    public function __construct(LoggerInterface $logger = null)
+    {
         $this->logger = $logger ?: new NullLogger();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function process(string $filename): ArrayCollection
+    public function process(RevisionLog $revisionLog)
     {
-        $collection = new ArrayCollection();
+        $parser = new CapistranoRevisionLogParser();
+        $filename = $revisionLog->getFilename();
         $previous = null;
 
         foreach ($this->getFileContents($filename) as $line) {
             try {
-                $parsed = $this->parser->parseLine($line);
+                $parsed = $parser->parseLine($line);
             } catch (RevisionLogParseException $e) {
                 $this->logger->error($e->getMessage());
                 continue;
@@ -68,10 +44,10 @@ class CapistranoRevisionLogProcessor implements RevisionLogProcessorInterface
                 if (null !== $previous && $previous->isRollback()) {
                     $this->processRollback($previous, $parsed);
 
-                    $collection->add($previous);
+                    $revisionLog->addDeployment($previous);
                 }
 
-                $collection->add($parsed);
+                $revisionLog->addDeployment($parsed);
             } elseif ($parsed->isRollback()) {
                 if (null === $previous || $previous->isRollback()) {
                     $this->logger->warning(sprintf(
@@ -85,13 +61,11 @@ class CapistranoRevisionLogProcessor implements RevisionLogProcessorInterface
             }
 
             $parsed
-                ->setApplication($this->application)
-                ->setStage($this->stage);
+                ->setApplication($revisionLog->getApplication())
+                ->setStage($revisionLog->getStage());
 
             $previous = $parsed;
         }
-
-        return $collection;
     }
 
     /**

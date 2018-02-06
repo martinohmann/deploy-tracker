@@ -4,21 +4,15 @@ namespace DeployTracker\Tests\Processor;
 
 use PHPUnit\Framework\TestCase;
 use Phake;
-use DeployTracker\Parser\RevisionLogParserInterface;
-use DeployTracker\Parser\CapistranoRevisionLogParser;
 use DeployTracker\Processor\CapistranoRevisionLogProcessor;
 use DeployTracker\Entity\Application;
 use DeployTracker\Entity\Deployment;
 use DeployTracker\Processor\RevisionLogProcessorInterface;
 use Psr\Log\LoggerInterface;
+use DeployTracker\Entity\RevisionLog;
 
 class CapistranoRevisionLogProcessorTest extends TestCase
 {
-    /**
-     * @var RevisionLogParserInterface
-     */
-    private $parser;
-
     /**
      * @var Application
      */
@@ -44,10 +38,9 @@ class CapistranoRevisionLogProcessorTest extends TestCase
      */
     public function setUp()
     {
-        $this->parser = new CapistranoRevisionLogParser();
         $this->application = (new Application())->setName('test_app');
         $this->stage = 'testing';
-        $this->processor = new CapistranoRevisionLogProcessor($this->parser, $this->application, $this->stage);
+        $this->processor = new CapistranoRevisionLogProcessor();
     }
 
     /**
@@ -68,7 +61,8 @@ class CapistranoRevisionLogProcessorTest extends TestCase
     public function shouldThrowExceptionIfFileIsNotProcessible()
     {
         $this->expectException(\RuntimeException::class);
-        $this->processor->process('some_nonexisting_file');
+        $revisionLog = new RevisionLog($this->application, $this->stage, 'nonexistent_file');
+        $this->processor->process($revisionLog);
     }
 
     /**
@@ -76,15 +70,15 @@ class CapistranoRevisionLogProcessorTest extends TestCase
      */
     public function shouldSkipUnparsableLinesAndLogError()
     {
-        $filename = $this->createTmpFile("some bogus line\n");
+        $revisionLog = $this->createRevisionLogWithContents("some bogus line\n");
 
         $logger = Phake::mock(LoggerInterface::class);
 
         $this->processor->setLogger($logger);
 
-        $collection = $this->processor->process($filename);
+        $this->processor->process($revisionLog);
 
-        self::assertCount(0, $collection);
+        self::assertCount(0, $revisionLog->getDeployments());
 
         Phake::verify($logger)->error;
     }
@@ -94,11 +88,13 @@ class CapistranoRevisionLogProcessorTest extends TestCase
      */
     public function shouldAddLineToCollection()
     {
-        $filename = $this->createTmpFile(
+        $revisionLog = $this->createRevisionLogWithContents(
             "Branch master (at deadbeef) deployed as release 20181224123456 by someone\n"
         );
 
-        $collection = $this->processor->process($filename);
+        $this->processor->process($revisionLog);
+
+        $collection = $revisionLog->getDeployments();
 
         self::assertCount(1, $collection);
 
@@ -115,15 +111,15 @@ class CapistranoRevisionLogProcessorTest extends TestCase
      */
     public function shouldSkipRollbackAndLogWarningIfThereIsNoPreviousDeployment()
     {
-        $filename = $this->createTmpFile("someotherguy rolled back to release 20181224012345\n");
+        $revisionLog = $this->createRevisionLogWithContents("someotherguy rolled back to release 20181224012345\n");
 
         $logger = Phake::mock(LoggerInterface::class);
 
         $this->processor->setLogger($logger);
 
-        $collection = $this->processor->process($filename);
+        $this->processor->process($revisionLog);
 
-        self::assertCount(0, $collection);
+        self::assertCount(0, $revisionLog->getDeployments());
 
         Phake::verify($logger)->warning;
     }
@@ -133,12 +129,14 @@ class CapistranoRevisionLogProcessorTest extends TestCase
      */
     public function shouldNotAddRollbackIfThereIsANoPreviousDeployment()
     {
-        $filename = $this->createTmpFile(implode("\n", [
+        $revisionLog = $this->createRevisionLogWithContents(implode("\n", [
             'someotherguy rolled back to release 20181224012345',
             'Branch master (at deadbeef) deployed as release 20181224133456 by someone',
         ]));
 
-        $collection = $this->processor->process($filename);
+        $this->processor->process($revisionLog);
+
+        $collection = $revisionLog->getDeployments();
 
         self::assertCount(1, $collection);
 
@@ -150,12 +148,14 @@ class CapistranoRevisionLogProcessorTest extends TestCase
      */
     public function shouldNotAddRollbackIfThereIsANoNextDeployment()
     {
-        $filename = $this->createTmpFile(implode("\n", [
+        $revisionLog = $this->createRevisionLogWithContents(implode("\n", [
             'Branch master (at deadbeef) deployed as release 20181224133456 by someone',
             'someotherguy rolled back to release 20181224012345',
         ]));
 
-        $collection = $this->processor->process($filename);
+        $this->processor->process($revisionLog);
+
+        $collection = $revisionLog->getDeployments();
 
         self::assertCount(1, $collection);
 
@@ -167,14 +167,16 @@ class CapistranoRevisionLogProcessorTest extends TestCase
      */
     public function shouldNotAddRollbackIfPreviousIsRollbackAsWell()
     {
-        $filename = $this->createTmpFile(implode("\n", [
+        $revisionLog = $this->createRevisionLogWithContents(implode("\n", [
             'Branch master (at deadbeef) deployed as release 20181224123456 by someone',
             'someotherguy rolled back to release 20181224001234',
             'someotherguy rolled back to release 20181224012345',
             'Branch master (at deadbeef) deployed as release 20181224133456 by someone',
         ]));
 
-        $collection = $this->processor->process($filename);
+        $this->processor->process($revisionLog);
+
+        $collection = $revisionLog->getDeployments();
 
         self::assertCount(3, $collection);
 
@@ -194,13 +196,15 @@ class CapistranoRevisionLogProcessorTest extends TestCase
      */
     public function shouldProcessRollbackIfThereIsAPreviousAndNextDeployment()
     {
-        $filename = $this->createTmpFile(implode("\n", [
+        $revisionLog = $this->createRevisionLogWithContents(implode("\n", [
             'Branch master (at deadbeef) deployed as release 20181224123456 by someone',
             'someotherguy rolled back to release 20181224012345',
             'Branch master (at deadbeef) deployed as release 20181224133456 by someone',
         ]));
 
-        $collection = $this->processor->process($filename);
+        $this->processor->process($revisionLog);
+
+        $collection = $revisionLog->getDeployments();
 
         self::assertCount(3, $collection);
 
@@ -226,5 +230,14 @@ class CapistranoRevisionLogProcessorTest extends TestCase
         file_put_contents($tmpFile, $contents);
 
         return $tmpFile;
+    }
+
+    /**
+     * @param string $contents
+     * @return RevisionLog
+     */
+    private function createRevisionLogWithContents(string $contents): RevisionLog
+    {
+        return new RevisionLog($this->application, $this->stage, $this->createTmpFile($contents));
     }
 }

@@ -7,7 +7,7 @@ use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Kernel as BaseKernel;
 use Symfony\Component\Routing\RouteCollectionBuilder;
-use DeployTracker\DependencyInjection\Compiler\RevisionLogImporterPass;
+use DeployTracker\DependencyInjection\Compiler\RevisionLogProcessorPass;
 
 class Kernel extends BaseKernel
 {
@@ -49,7 +49,7 @@ class Kernel extends BaseKernel
      */
     protected function build(ContainerBuilder $container): void
     {
-        $container->addCompilerPass(new RevisionLogImporterPass());
+        $container->addCompilerPass(new RevisionLogProcessorPass());
     }
 
     /**

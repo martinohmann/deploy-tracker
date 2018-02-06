@@ -40,9 +40,9 @@ services:
         arguments:
             - DeployTracker\Entity\Deployment
 
-    DeployTracker\Importer\CapistranoRevisionLogImporter:
+    DeployTracker\Processor\CapistranoRevisionLogProcessor:
         tags:
-            - {name: deploy_tracker.revision_log_importer, type: capistrano}
+            - {name: deploy_tracker.revision_log_processor, type: capistrano}
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
