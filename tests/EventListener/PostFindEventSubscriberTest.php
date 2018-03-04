@@ -8,6 +8,7 @@ use DeployTracker\ORM\Tools\Pagination\Paginator;
 use DeployTracker\Validator\PaginationValidator;
 use DeployTracker\Event\PostFindEvent;
 use DeployTracker\EventListener\PostFindEventSubscriber;
+use DeployTracker\Event\FilterEvents;
 
 class PostFindEventSubscriberTest extends TestCase
 {
@@ -26,5 +27,15 @@ class PostFindEventSubscriberTest extends TestCase
         $subscriber->onPostFindEvent($event);
 
         Phake::verify($validatorMock)->validate($paginatorMock);
+    }
+
+    /**
+     * @test
+     */
+    public function shouldSubscribeToPostFindEvent()
+    {
+        $subscribedEvents = PostFindEventSubscriber::getSubscribedEvents();
+
+        $this->assertArrayHasKey(FilterEvents::POST_FIND, $subscribedEvents);
     }
 }

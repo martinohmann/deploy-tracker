@@ -10,6 +10,7 @@ use Phake;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\KernelEvents;
 
 class ApiAuthTokenSubscriberTest extends TestCase
 {
@@ -89,5 +90,15 @@ class ApiAuthTokenSubscriberTest extends TestCase
         $subscriber = new ApiAuthTokenSubscriber('thisisatoken', 'auth_token');
 
         self::assertNull($subscriber->onKernelController($this->eventMock));
+    }
+
+    /**
+     * @test
+     */
+    public function shouldSubscribeToFilterControllerEvent()
+    {
+        $subscribedEvents = ApiAuthTokenSubscriber::getSubscribedEvents();
+
+        $this->assertArrayHasKey(KernelEvents::CONTROLLER, $subscribedEvents);
     }
 }

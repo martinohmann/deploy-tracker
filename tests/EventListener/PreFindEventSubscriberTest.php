@@ -13,6 +13,7 @@ use \Phake;
 use DeployTracker\Event\PreFindEvent;
 use DeployTracker\Repository\FilterableInterface;
 use DeployTracker\Repository\DeploymentRepository;
+use DeployTracker\Event\FilterEvents;
 
 class PreFindEventSubscriberTest extends TestCase
 {
@@ -107,6 +108,16 @@ class PreFindEventSubscriberTest extends TestCase
         $this->subscriber->onPreFindEvent($event);
 
         self::assertEquals(['some_filter' => 'some_value', 'some_other' => 'other_value'], $event->getFilters());
+    }
+
+    /**
+     * @test
+     */
+    public function shouldSubscribeToPreFindEvent()
+    {
+        $subscribedEvents = PreFindEventSubscriber::getSubscribedEvents();
+
+        $this->assertArrayHasKey(FilterEvents::PRE_FIND, $subscribedEvents);
     }
 
     /**

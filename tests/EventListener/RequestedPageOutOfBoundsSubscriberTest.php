@@ -14,6 +14,7 @@ use Symfony\Component\Routing\Generator\UrlGenerator;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
+use Symfony\Component\HttpKernel\KernelEvents;
 
 class RequestedPageOutOfBoundsSubscriberTest extends TestCase
 {
@@ -71,6 +72,16 @@ class RequestedPageOutOfBoundsSubscriberTest extends TestCase
         $subscriber->onKernelException($eventMock);
 
         Phake::verify($eventMock, Phake::never())->setResponse;
+    }
+
+    /**
+     * @test
+     */
+    public function shouldSubscribeToKernelExceptionEvent()
+    {
+        $subscribedEvents = RequestedPageOutOfBoundsSubscriber::getSubscribedEvents();
+
+        $this->assertArrayHasKey(KernelEvents::EXCEPTION, $subscribedEvents);
     }
 
     /**
