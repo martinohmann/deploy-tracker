@@ -13,10 +13,12 @@ before_script:
 script:
     - vendor/bin/phpunit --coverage-clover build/logs/clover.xml
 after_success:
-   - travis_retry php coveralls.phar -v
+    - travis_retry php coveralls.phar -v
 notifications:
     email: false
 cache:
     directories:
         - vendor
         - $HOME/.cache/composer
+branches:
+    only: master
